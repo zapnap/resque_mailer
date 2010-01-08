@@ -7,22 +7,22 @@ Assumes that you're using Resque (http://github.com/defunkt/resque) for your bac
 
 Include Resque::Mailer in your ActionMailer subclass(es) like this:
 
-class MyMailer < ActionMailer::Base
-  include Resque::Mailer
-end
+ class MyMailer < ActionMailer::Base
+   include Resque::Mailer
+ end
 
 Or if you want to always use asynchronous delivery by default, create an initializer in your
 Rails project or piggyback on your load_resque.rb initializer:
 
-class ActionMailer::Base
-  include Resque::Mailer
-end
+ class ActionMailer::Base
+   include Resque::Mailer
+ end
 
 Now, when MyMailer.deliver_subject_email is called, an entry will be created in the job queue.
 Your Resque workers will be able to deliver this for you; the queue we're using is imaginatively
-named 'mailer'. Just make sure your workers know about it and are loading your environment:
+named +mailer+. Just make sure your workers know about it and are loading your environment:
 
-QUEUE=mailer rake environment resque:work
+ QUEUE=mailer rake environment resque:work
 
 Note that you can still have mail delivered synchronously by using the bang method variant:
 MyMailer.deliver_subject_email!
@@ -31,17 +31,18 @@ MyMailer.deliver_subject_email!
 
 Install it as a plugin or as a gem plugin.
 
-script/plugin install git://github.com/zapnap/resque_mailer.git
+ script/plugin install git://github.com/zapnap/resque_mailer.git
 
-config.gem 'resque_mailer'
+ # config/environment.rb
+ config.gem 'resque_mailer'
 
 == Testing
 
 You don't want to be sending actual emails in the test environment, so you can configure the
 environments that should be excluded like so:
 
-# config/initializers/resque_mailer.rb
-Resque::Mailer.excluded_environments = [:test, :cucumber]
+ # config/initializers/resque_mailer.rb
+ Resque::Mailer.excluded_environments = [:test, :cucumber]
 
 == Note on Patches / Pull Requests
  
