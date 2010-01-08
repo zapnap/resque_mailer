@@ -55,5 +55,5 @@ environments that should be excluded like so:
 
 == Credits
 
-This work is essentially a forked version of delayed_job_mailer http://github.com/andersondias/delayed_job_mailer) by Anderson Dias
+This work is essentially a forked version of delayed_job_mailer (http://github.com/andersondias/delayed_job_mailer) by Anderson Dias
 (which in turn was inspired by Alexander Lang's workling_mailer). Enhanced and modified to work with Resque by Nick Plante.
