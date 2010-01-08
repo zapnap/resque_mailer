@@ -6,7 +6,7 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "resque_mailer"
     gem.summary = %Q{Rails plugin for sending asynchronous email with ActionMailer and Resque}
-    gem.description = %Q{Rails plugin for sendings asynchronous email with ActionMailer and Resque}
+    gem.description = %Q{Rails plugin for sending asynchronous email with ActionMailer and Resque}
     gem.email = "nap@zerosum.org"
     gem.homepage = "http://github.com/zapnap/resque_mailer"
     gem.authors = ["Nick Plante"]
