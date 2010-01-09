@@ -5,27 +5,28 @@ Assumes that you're using Resque (http://github.com/defunkt/resque) for your bac
 
 == Usage
 
-Include Resque::Mailer in your ActionMailer subclass(es) like this:
+Include +Resque::Mailer+ in your ActionMailer subclass(es) like this:
 
  class MyMailer < ActionMailer::Base
    include Resque::Mailer
  end
 
 Or if you want to always use asynchronous delivery by default, create an initializer in your
-Rails project or piggyback on your load_resque.rb initializer:
+Rails project or piggyback on your +load_resque.rb+ initializer:
 
  class ActionMailer::Base
    include Resque::Mailer
  end
 
-Now, when MyMailer.deliver_subject_email is called, an entry will be created in the job queue.
+Now, when +MyMailer.deliver_subject_email+ is called, an entry will be created in the job queue.
 Your Resque workers will be able to deliver this for you; the queue we're using is imaginatively
 named +mailer+. Just make sure your workers know about it and are loading your environment:
 
  QUEUE=mailer rake environment resque:work
 
 Note that you can still have mail delivered synchronously by using the bang method variant:
-MyMailer.deliver_subject_email!
+
+ +MyMailer.deliver_subject_email!+
 
 == Installation
 
