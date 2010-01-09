@@ -28,6 +28,11 @@ Note that you can still have mail delivered synchronously by using the bang meth
 
  MyMailer.deliver_subject_email!
 
+Oh, by the way. Don't forget that your async mailer jobs will be processed by a separate worker.
+This means that you should resist the temptation to pass database-backed objects as parameters
+in your mailer and instead pass record identifiers. Then, in your delivery method, you can look
+up the record from the id and use it as needed.
+
 == Installation
 
 Install it as a plugin or as a gem plugin from Gemcutter:
