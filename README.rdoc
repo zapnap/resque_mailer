@@ -30,8 +30,9 @@ Note that you can still have mail delivered synchronously by using the bang meth
 
 == Installation
 
-Install it as a plugin or as a gem plugin.
+Install it as a plugin or as a gem plugin from Gemcutter:
 
+ gem install resque_mailer
  script/plugin install git://github.com/zapnap/resque_mailer.git
 
  # config/environment.rb
