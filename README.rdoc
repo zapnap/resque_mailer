@@ -11,13 +11,6 @@ Include Resque::Mailer in your ActionMailer subclass(es) like this:
    include Resque::Mailer
  end
 
-Or if you want to always use asynchronous delivery by default, create an initializer in your
-Rails project or piggyback on your load_resque.rb initializer:
-
- class ActionMailer::Base
-   include Resque::Mailer
- end
-
 Now, when MyMailer.deliver_subject_email is called, an entry will be created in the job queue.
 Your Resque workers will be able to deliver this for you; the queue we're using is imaginatively
 named +mailer+. Just make sure your workers know about it and are loading your environment:
