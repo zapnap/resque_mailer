@@ -1,41 +1,36 @@
 module Resque
   module Mailer
-    
-    def self.included(base)
-      base.extend(ClassMethods)
+
+    class << self
+      attr_accessor :default_queue_name
+      attr_reader :excluded_environments
+
+      def excluded_environments=(envs)
+        @excluded_environments = [*envs].map { |e| e.to_sym }
+      end
+
+      def included(base)
+        base.extend(ClassMethods)
+      end
     end
+
+    self.default_queue_name = "mailer"
+    self.excluded_environments = [:test]
 
     module ClassMethods
-      def method_missing(method_symbol, *params)
-            
-        if ::Resque::Mailer.excluded_environments &&
-          ::Resque::Mailer.excluded_environments.include?(::RAILS_ENV.to_sym)
-          return super(method_symbol, *params)
-        end
-            
-        case method_symbol.id2name
-        when /^deliver_([_a-z]\w*)\!/ then super(method_symbol, *params)
-        when /^deliver_([_a-z]\w*)/ then ::Resque.enqueue(self, "#{method_symbol}!", *params)
-        else super(method_symbol, *params)
-        end
-      end
-
       def queue
-        :mailer
+        ::Resque::Mailer.default_queue_name
       end
 
-      def perform(cmd, *args)
-        send(cmd, *args)
+      def excluded_environment?(name)
+        ::Resque::Mailer.excluded_environments && ::Resque::Mailer.excluded_environments.include?(name.to_sym)
       end
     end
-      
-    def self.excluded_environments=(*environments)
-      @@excluded_environments = environments && environments.flatten.collect! { |env| env.to_sym }
-    end
-    
-    def self.excluded_environments
-      @@excluded_environments ||= []
-    end
-    
   end
+end
+
+if defined? Rails.root
+  require "resque_mailer/rails3"
+else
+  require "resque_mailer/rails2"
 end
