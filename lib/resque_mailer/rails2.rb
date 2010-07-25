@@ -2,8 +2,12 @@ module Resque
   module Mailer
     module ClassMethods
 
+      def current_env
+        RAILS_ENV
+      end
+
       def method_missing(method_name, *args)
-        return super if excluded_environment?(::RAILS_ENV)
+        return super if environment_excluded?
 
         case method_name.id2name
         when /^deliver_([_a-z]\w*)\!/ then super(method_name, *args)

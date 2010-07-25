@@ -19,8 +19,12 @@ module Resque
 
     module ClassMethods
 
+      def current_env
+        ::Rails.env
+      end
+
       def method_missing(method_name, *args)
-        return super if excluded_environment?(::Rails.env)
+        return super if environment_excluded?
 
         if action_methods.include?(method_name.to_s)
           Rails3MailerProxy.new(self, method_name, *args)

@@ -9,10 +9,10 @@ begin
     gem.description = %Q{Rails plugin for sending asynchronous email with ActionMailer and Resque}
     gem.email = "nap@zerosum.org"
     gem.homepage = "http://github.com/zapnap/resque_mailer"
-    gem.authors = ["Nick Plante"]
+    gem.authors = ["Nick Plante", "Marcin Kulik"]
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.add_development_dependency "resque", ">= 1.2.3"
-    gem.add_development_dependency "actionmailer", ">= 2.2.2"
+    gem.add_development_dependency "actionmailer", ">= 2.3.8"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
@@ -31,8 +31,6 @@ Spec::Rake::SpecTask.new(:rcov) do |spec|
   spec.pattern = 'spec/**/*_spec.rb'
   spec.rcov = true
 end
-
-task :spec => :check_dependencies
 
 task :default => :spec
 
