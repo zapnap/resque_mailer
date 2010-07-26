@@ -1,13 +1,10 @@
 require File.join(File.expand_path(File.dirname(__FILE__)), 'spec_helper')
 
-require 'spec/autorun'
-
 class CommonMailer
   include Resque::Mailer
 end
 
 describe Resque::Mailer do
-
   describe ".queue" do
     context "when not changed" do
       it "should return 'mailer'" do

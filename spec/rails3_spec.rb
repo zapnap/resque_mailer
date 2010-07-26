@@ -1,7 +1,6 @@
 require File.join(File.expand_path(File.dirname(__FILE__)), 'spec_helper')
 
-require 'rspec/autorun'
-gem     'actionmailer', '3.0.0.beta4'
+gem     'actionmailer', '>=3.0.0.beta4'
 require 'action_mailer'
 require 'resque_mailer/rails3'
 
@@ -23,13 +22,13 @@ describe Rails3Mailer do
   end
 
   describe '#deliver' do
-    before :all do
-      @delivery = lambda do
+    before(:all) do
+      @delivery = lambda {
         Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver
-      end
+      }
     end
 
-    before :each do
+    before(:each) do
       Resque.stub(:enqueue)
     end
 
@@ -60,9 +59,9 @@ describe Rails3Mailer do
 
   describe ".perform" do
     it 'should perform a queued mailer job' do
-      lambda do
+      lambda {
         Rails3Mailer.perform(:test_mail, Rails3Mailer::MAIL_PARAMS)
-      end.should change(ActionMailer::Base.deliveries, :size).by(1)
+      }.should change(ActionMailer::Base.deliveries, :size).by(1)
     end
   end
 end

@@ -20,16 +20,31 @@ rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
 end
 
-require 'spec/rake/spectask'
-Spec::Rake::SpecTask.new(:spec) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.spec_files = FileList['spec/**/*_spec.rb']
+begin
+  require 'spec/rake/spectask'
+
+  puts "Using RSpec 1.x / Rails 2.x"
+
+  desc "Run specs for Rails 2.x"
+  Spec::Rake::SpecTask.new(:spec) do |spec|
+    spec.spec_files = FileList['spec/common_spec.rb', 'spec/rails2_spec.rb']
+  end
+rescue LoadError
+  puts "RSpec 1.x unavailable"
 end
 
-Spec::Rake::SpecTask.new(:rcov) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.pattern = 'spec/**/*_spec.rb'
-  spec.rcov = true
+begin
+  require 'rspec/core'
+  require 'rspec/core/rake_task'
+
+  puts "Using RSpec 2.x / Rails 3.x"
+
+  desc "Run specs for Rails 3.x"
+  RSpec::Core::RakeTask.new(:spec) do |spec|
+    spec.pattern = ["spec/common_spec.rb","spec/rails3_spec.rb"]
+  end
+rescue LoadError
+  puts "RSpec 2.x unavailable"
 end
 
 task :default => :spec
