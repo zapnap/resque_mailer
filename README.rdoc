@@ -1,7 +1,10 @@
 = ResqueMailer
 
-A gem plugin which allows messages prepared by ActionMailer to be delivered asynchronously.
-Assumes that you're using Resque (http://github.com/defunkt/resque) for your background jobs.
+A gem plugin which allows messages prepared by ActionMailer to be delivered
+asynchronously. Assumes you're using Resque (http://github.com/defunkt/resque)
+for your background jobs.
+
+Works in both Rails 2.x and Rails 3.x.
 
 == Usage
 
@@ -11,20 +14,32 @@ Include Resque::Mailer in your ActionMailer subclass(es) like this:
    include Resque::Mailer
  end
 
-Now, when MyMailer.deliver_subject_email is called, an entry will be created in the job queue.
-Your Resque workers will be able to deliver this for you; the queue we're using is imaginatively
-named +mailer+. Just make sure your workers know about it and are loading your environment:
+Now, when MyMailer.deliver_subject_email is called, an entry will be created
+in the job queue. Your Resque workers will be able to deliver this message for
+you. The queue we're using is imaginatively named +mailer+, so just make sure
+your workers know about it and are loading your environment:
 
  QUEUE=mailer rake environment resque:work
 
-Note that you can still have mail delivered synchronously by using the bang method variant:
+Note that you can still have mail delivered synchronously by using the bang
+method variant:
 
  MyMailer.deliver_subject_email!
 
-Oh, by the way. Don't forget that your async mailer jobs will be processed by a separate worker.
-This means that you should resist the temptation to pass database-backed objects as parameters
-in your mailer and instead pass record identifiers. Then, in your delivery method, you can look
-up the record from the id and use it as needed.
+Oh, by the way. Don't forget that your async mailer jobs will be processed by
+a separate worker. This means that you should resist the temptation to pass
+database-backed objects as parameters in your mailer and instead pass record
+identifiers. Then, in your delivery method, you can look up the record from
+the id and use it as needed.
+
+== Rails 3 Support
+
+Rails 3 has made some changes to the ActionMailer interface. Instead of
+calling +MyMailer.deliver_subject_email(params)+, you'll want to call
++MyMailer.subject_email(params).deliver+.
+
+You still need to include +Resque::Mailer+ in your mailer as described above.
+Everything else should work as expected.
 
 == Installation
 
@@ -33,13 +48,16 @@ Install it as a plugin or as a gem plugin from Gemcutter:
  gem install resque_mailer
  script/plugin install git://github.com/zapnap/resque_mailer.git
 
- # config/environment.rb
+ # Rails 2: edit config/environment.rb
  config.gem 'resque_mailer'
+
+ # Rails 3: add it to your Gemfile
+ gem 'resque_mailer'
 
 == Testing
 
-You don't want to be sending actual emails in the test environment, so you can configure the
-environments that should be excluded like so:
+You don't want to be sending actual emails in the test environment, so you can
+configure the environments that should be excluded like so:
 
  # config/initializers/resque_mailer.rb
  Resque::Mailer.excluded_environments = [:test, :cucumber]
@@ -55,5 +73,6 @@ environments that should be excluded like so:
 
 == Credits
 
-This work is essentially a forked version of delayed_job_mailer (http://github.com/andersondias/delayed_job_mailer) by Anderson Dias
-(which in turn was inspired by Alexander Lang's workling_mailer). Enhanced and modified to work with Resque by Nick Plante.
+This work is essentially a forked version of delayed_job_mailer
+(http://github.com/andersondias/delayed_job_mailer) by Anderson Dias. Enhanced
+and modified to work with Resque by Nick Plante.
