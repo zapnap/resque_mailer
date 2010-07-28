@@ -1,6 +1,6 @@
 require File.join(File.expand_path(File.dirname(__FILE__)), 'spec_helper')
 
-gem     'actionmailer', '~>2.3.8'
+gem     'actionmailer', '~>2.3.4'
 require 'action_mailer'
 require 'resque_mailer/rails2'
 

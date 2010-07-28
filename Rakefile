@@ -12,7 +12,7 @@ begin
     gem.authors = ["Nick Plante", "Marcin Kulik"]
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.add_development_dependency "resque", ">= 1.2.3"
-    gem.add_development_dependency "actionmailer", ">= 2.3.8"
+    gem.add_development_dependency "actionmailer", ">= 2.3.4"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
