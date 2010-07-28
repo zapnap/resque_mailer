@@ -35,11 +35,11 @@ the id and use it as needed.
 == Rails 3 Support
 
 Rails 3 has made some changes to the ActionMailer interface. Instead of
-calling +MyMailer.deliver_subject_email(params)+, you'll want to call
-+MyMailer.subject_email(params).deliver+.
+calling <tt>MyMailer.deliver_subject_email(params)</tt>, you'll want to call
+<tt>MyMailer.subject_email(params).deliver</tt>.
 
-You still need to include +Resque::Mailer+ in your mailer as described above.
-Everything else should work as expected.
+You still need to include <tt>Resque::Mailer</tt> in your mailer as described
+above. Everything else should work as expected.
 
 == Installation
 
