@@ -19,7 +19,7 @@ module Resque
 
     module ClassMethods
       def environment_excluded?
-        excluded_environment?(current_env)
+        !ActionMailer::Base.perform_deliveries || excluded_environment?(current_env)
       end
 
       def queue
