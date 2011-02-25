@@ -32,6 +32,18 @@ database-backed objects as parameters in your mailer and instead pass record
 identifiers. Then, in your delivery method, you can look up the record from
 the id and use it as needed.
 
+If you want to set a different default queue name for your mailer, you can change  
+the <tt>default_queue_name</tt> property like so:
+
+ # config/initializers/resque_mailer.rb
+ Resque::Mailer.default_queue_name = 'application_specific_mailer'
+
+This is useful when you are running more than one application using 
+resque_mailer in a shared environment. You will need to use the new queue 
+name when starting your workers.
+
+ QUEUE=application_specific_mailer rake environment resque:work
+
 == Rails 3 Support
 
 Rails 3 has made some changes to the ActionMailer interface. Instead of
