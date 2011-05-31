@@ -53,6 +53,24 @@ calling <tt>MyMailer.deliver_subject_email(params)</tt>, you'll want to call
 You still need to include <tt>Resque::Mailer</tt> in your mailer as described
 above. Everything else should work as expected.
 
+== Resque::Mailer as a Project Default
+
+If you have a variety of mailers in your application and want all of them to use
+Resque::Mailer by default, you can subclass ActionMailer::Base and have your
+other mailers inherit from an AsyncMailer:
+
+  # config/initializers/resque_mailer.rb
+  class AsyncMailer < ActionMailer::Base
+    include Resque::Mailer
+  end
+
+  # app/mailers/example_mailer.rb
+  class ExampleMailer < AsyncMailer
+    def say_hello(user)
+      # ...
+    end
+  end
+
 == Installation
 
 Install it as a plugin or as a gem plugin from Gemcutter:
@@ -75,7 +93,7 @@ configure the environments that should be excluded like so:
  Resque::Mailer.excluded_environments = [:test, :cucumber]
 
 == Note on Patches / Pull Requests
- 
+
 * Fork the project.
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a future version unintentionally.
@@ -85,6 +103,6 @@ configure the environments that should be excluded like so:
 
 == Credits
 
-This work is essentially a forked version of delayed_job_mailer
+This work was inspired by delayed_job_mailer
 (http://github.com/andersondias/delayed_job_mailer) by Anderson Dias. Enhanced
 and modified to work with Resque by Nick Plante.
