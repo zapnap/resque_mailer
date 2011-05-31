@@ -59,17 +59,17 @@ If you have a variety of mailers in your application and want all of them to use
 Resque::Mailer by default, you can subclass ActionMailer::Base and have your
 other mailers inherit from an AsyncMailer:
 
-  # config/initializers/resque_mailer.rb
-  class AsyncMailer < ActionMailer::Base
-    include Resque::Mailer
-  end
+ # config/initializers/resque_mailer.rb
+ class AsyncMailer < ActionMailer::Base
+   include Resque::Mailer
+ end
 
-  # app/mailers/example_mailer.rb
-  class ExampleMailer < AsyncMailer
-    def say_hello(user)
-      # ...
-    end
-  end
+ # app/mailers/example_mailer.rb
+ class ExampleMailer < AsyncMailer
+   def say_hello(user)
+     # ...
+   end
+ end
 
 == Installation
 
