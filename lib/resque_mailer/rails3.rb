@@ -11,10 +11,12 @@ module Resque
 
         if action_methods.include?(method_name.to_s)
           mailer_class = self
+          resque = self.resque
+
           super.tap do |resque_mail|
             resque_mail.class_eval do
               define_method(:deliver) do
-                ::Resque.enqueue(mailer_class, method_name, *args)
+                resque.enqueue(mailer_class, method_name, *args)
                 self
               end
             end

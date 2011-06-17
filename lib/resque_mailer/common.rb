@@ -2,7 +2,7 @@ module Resque
   module Mailer
 
     class << self
-      attr_accessor :default_queue_name
+      attr_accessor :default_queue_name, :default_queue
       attr_reader :excluded_environments
 
       def excluded_environments=(envs)
@@ -15,6 +15,7 @@ module Resque
     end
 
     self.default_queue_name = "mailer"
+    self.default_queue      = ::Resque
     self.excluded_environments = [:test]
 
     module ClassMethods
@@ -24,6 +25,10 @@ module Resque
 
       def queue
         ::Resque::Mailer.default_queue_name
+      end
+
+      def resque
+        ::Resque::Mailer.default_queue
       end
 
       def excluded_environment?(name)

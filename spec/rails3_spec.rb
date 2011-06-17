@@ -31,12 +31,19 @@ describe Rails3Mailer do
     }
   end
 
-  before { Rails3Mailer.stub(:current_env => :test) }
+  let(:resque) do
+    define_constant(:test_resque) { }
+  end
+
+  before do
+    Rails3Mailer.stub(:current_env => :test)
+    Resque::Mailer.default_queue = resque
+  end
 
   describe '#deliver' do
     subject { Rails3Mailer.test_mail(default_email_params).deliver }
 
-    before { Resque.stub(:enqueue) }
+    before { resque.stub(:enqueue) }
 
     it_should_behave_like "Mail::Message"
 
@@ -45,7 +52,7 @@ describe Rails3Mailer do
     end
 
     it 'should place the deliver action on the Resque "mailer" queue' do
-      Resque.should_receive(:enqueue).with(Rails3Mailer, :test_mail, default_email_params)
+      resque.should_receive(:enqueue).with(Rails3Mailer, :test_mail, default_email_params)
       subject
     end
 
@@ -53,7 +60,7 @@ describe Rails3Mailer do
       it 'should not deliver through Resque for excluded environments' do
         Resque::Mailer.stub(:excluded_environments => [:custom])
         Rails3Mailer.should_receive(:current_env).and_return(:custom)
-        Resque.should_not_receive(:enqueue)
+        resque.should_not_receive(:enqueue)
         subject
       end
     end
