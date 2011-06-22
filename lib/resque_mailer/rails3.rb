@@ -1,22 +1,5 @@
 module Resque
   module Mailer
-
-    class Rails3MailerProxy
-      def initialize(mailer_class, action, *args)
-        @mailer_class = mailer_class
-        @action = action
-        @args = args
-      end
-
-      def deliver
-        ::Resque.enqueue(@mailer_class, @action, *@args)
-      end
-
-      def deliver!
-        @mailer_class.send(:new, @action, *@args).message.deliver
-      end
-    end
-
     module ClassMethods
 
       def current_env
@@ -27,14 +10,24 @@ module Resque
         return super if environment_excluded?
 
         if action_methods.include?(method_name.to_s)
-          Rails3MailerProxy.new(self, method_name, *args)
+          mailer_class = self
+          resque = self.resque
+
+          super.tap do |resque_mail|
+            resque_mail.class_eval do
+              define_method(:deliver) do
+                resque.enqueue(mailer_class, method_name, *args)
+                self
+              end
+            end
+          end
         else
           super
         end
       end
 
       def perform(action, *args)
-        Rails3MailerProxy.new(self, action, *args).deliver!
+        self.send(:new, action, *args).message.deliver!
       end
 
     end

@@ -5,6 +5,21 @@ class CommonMailer
 end
 
 describe Resque::Mailer do
+  describe ".default_queue" do
+    before do
+      define_constant(:fake_resque) { }
+    end
+
+    it "defaults to resque as the default queue" do
+      Resque::Mailer.default_queue.should == ::Resque
+    end
+
+    it "allows overriding of the default queue" do
+      Resque::Mailer.default_queue = FakeResque
+      Resque::Mailer.default_queue.should == FakeResque
+    end
+  end
+
   describe ".queue" do
     context "when not changed" do
       it "should return 'mailer'" do
