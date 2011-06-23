@@ -64,4 +64,11 @@ describe Rails3Mailer do
       }.should change(ActionMailer::Base.deliveries, :size).by(1)
     end
   end
+
+  describe "original message methods" do
+    it "should proxy methods other than deliver" do
+      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).from.should include 'from@example.org'
+      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).to.should include 'misio@example.org'
+    end
+  end
 end

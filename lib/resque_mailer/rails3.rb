@@ -13,7 +13,21 @@ module Resque
       end
 
       def deliver!
-        @mailer_class.send(:new, @action, *@args).message.deliver
+        original_message.deliver
+      end
+
+      def respond_to?(method, *args)
+        super || original_message.respond_to?(method, *args)
+      end
+
+      def method_missing(method_name, *args)
+        original_message.send(method_name, *args)
+      end
+
+      protected
+
+      def original_message
+        @original_message ||= @mailer_class.send(:new, @action, *@args).message
       end
     end
 
