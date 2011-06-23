@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{resque_mailer}
-  s.version = "1.0.1"
+  s.version = "2.0.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Nick Plante", "Marcin Kulik"]
-  s.date = %q{2010-12-21}
+  s.authors = ["Nick Plante"]
+  s.date = %q{2011-06-23}
   s.description = %q{Rails plugin for sending asynchronous email with ActionMailer and Resque}
   s.email = %q{nap@zerosum.org}
   s.extra_rdoc_files = [
@@ -18,18 +18,16 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".document",
+    "Gemfile",
+    "Gemfile.lock",
     "LICENSE",
     "README.rdoc",
     "Rakefile",
     "VERSION",
     "lib/resque_mailer.rb",
-    "lib/resque_mailer/common.rb",
-    "lib/resque_mailer/rails2.rb",
-    "lib/resque_mailer/rails3.rb",
     "rails/init.rb",
-    "spec/common_spec.rb",
-    "spec/rails2_spec.rb",
-    "spec/rails3_spec.rb",
+    "resque_mailer.gemspec",
+    "spec/resque_mailer_spec.rb",
     "spec/spec.opts",
     "spec/spec_helper.rb"
   ]
@@ -37,30 +35,42 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Rails plugin for sending asynchronous email with ActionMailer and Resque}
-  s.test_files = [
-    "spec/common_spec.rb",
-    "spec/rails2_spec.rb",
-    "spec/rails3_spec.rb",
-    "spec/spec_helper.rb"
-  ]
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<rspec>, [">= 1.2.9"])
+      s.add_runtime_dependency(%q<resque>, [">= 1.2.3"])
+      s.add_runtime_dependency(%q<actionmailer>, [">= 3.0.0"])
+      s.add_development_dependency(%q<rspec>, [">= 2.6.0"])
+      s.add_development_dependency(%q<yard>, [">= 0.6.0"])
+      s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
+      s.add_development_dependency(%q<jeweler>, ["~> 1.6.2"])
+      s.add_development_dependency(%q<rspec>, [">= 2.6.0"])
       s.add_development_dependency(%q<resque>, [">= 1.2.3"])
-      s.add_development_dependency(%q<actionmailer>, [">= 2.3.4"])
+      s.add_development_dependency(%q<actionmailer>, [">= 3.0.0"])
     else
-      s.add_dependency(%q<rspec>, [">= 1.2.9"])
       s.add_dependency(%q<resque>, [">= 1.2.3"])
-      s.add_dependency(%q<actionmailer>, [">= 2.3.4"])
+      s.add_dependency(%q<actionmailer>, [">= 3.0.0"])
+      s.add_dependency(%q<rspec>, [">= 2.6.0"])
+      s.add_dependency(%q<yard>, [">= 0.6.0"])
+      s.add_dependency(%q<bundler>, ["~> 1.0.0"])
+      s.add_dependency(%q<jeweler>, ["~> 1.6.2"])
+      s.add_dependency(%q<rspec>, [">= 2.6.0"])
+      s.add_dependency(%q<resque>, [">= 1.2.3"])
+      s.add_dependency(%q<actionmailer>, [">= 3.0.0"])
     end
   else
-    s.add_dependency(%q<rspec>, [">= 1.2.9"])
     s.add_dependency(%q<resque>, [">= 1.2.3"])
-    s.add_dependency(%q<actionmailer>, [">= 2.3.4"])
+    s.add_dependency(%q<actionmailer>, [">= 3.0.0"])
+    s.add_dependency(%q<rspec>, [">= 2.6.0"])
+    s.add_dependency(%q<yard>, [">= 0.6.0"])
+    s.add_dependency(%q<bundler>, ["~> 1.0.0"])
+    s.add_dependency(%q<jeweler>, ["~> 1.6.2"])
+    s.add_dependency(%q<rspec>, [">= 2.6.0"])
+    s.add_dependency(%q<resque>, [">= 1.2.3"])
+    s.add_dependency(%q<actionmailer>, [">= 3.0.0"])
   end
 end
 

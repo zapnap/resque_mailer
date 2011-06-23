@@ -1,24 +1,33 @@
 require File.join(File.expand_path(File.dirname(__FILE__)), 'spec_helper')
 
-gem     'actionmailer', '>=3.0.0.beta4'
-require 'action_mailer'
-require 'resque_mailer/rails3'
-
-ActionMailer::Base.delivery_method = :test
-
 class Rails3Mailer < ActionMailer::Base
   include Resque::Mailer
   default :from => "from@example.org", :subject => "Subject"
-  MAIL_PARAMS = { :to => "misio@example.org" }
+  MAIL_PARAMS = { :to => "crafty@example.org" }
 
   def test_mail(*params)
     mail(*params)
   end
 end
 
-describe Rails3Mailer do
+describe Resque::Mailer do
   before do
     Rails3Mailer.stub(:current_env => :test)
+  end
+
+  describe "queue" do
+    context "when using the default" do
+      it "should return 'mailer'" do
+        Rails3Mailer.queue.should == "mailer"
+      end
+    end
+
+    context "when modified by user" do
+      it "should return proper queue name" do
+        Resque::Mailer.default_queue_name = "postal"
+        Rails3Mailer.queue.should == "postal"
+      end
+    end
   end
 
   describe '#deliver' do
@@ -57,11 +66,19 @@ describe Rails3Mailer do
     end
   end
 
-  describe ".perform" do
+  describe "perform" do
     it 'should perform a queued mailer job' do
       lambda {
         Rails3Mailer.perform(:test_mail, Rails3Mailer::MAIL_PARAMS)
       }.should change(ActionMailer::Base.deliveries, :size).by(1)
+    end
+  end
+
+  describe "original mail methods" do
+    it "should be preserved" do
+      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).subject.should == 'Subject'
+      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).from.should include('from@example.org')
+      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).to.should include('crafty@example.org')
     end
   end
 end
