@@ -1,4 +1,4 @@
-### 2.0.0
+### 2.0.0 / 2011-06-24
 
 * Removed support for legacy Rails 2.x applications (please use v1.x)
 * Removed mailer proxy, return Mail::Message object
