@@ -1,7 +1,7 @@
 module Resque
   module Mailer
     class << self
-      attr_accessor :default_queue_name
+      attr_accessor :default_queue_name, :default_queue_target
       attr_reader :excluded_environments
 
       def excluded_environments=(envs)
@@ -13,6 +13,7 @@ module Resque
       end
     end
 
+    self.default_queue_target = ::Resque
     self.default_queue_name = "mailer"
     self.excluded_environments = [:test]
 
@@ -25,11 +26,12 @@ module Resque
         return super if environment_excluded?
 
         if action_methods.include?(method_name.to_s)
+          resque = self.resque
           mailer_class = self
           super.tap do |resque_mail|
             resque_mail.class_eval do
               define_method(:deliver) do
-                ::Resque.enqueue(mailer_class, method_name, *args)
+                resque.enqueue(mailer_class, method_name, *args)
                 self
               end
             end
@@ -49,6 +51,10 @@ module Resque
 
       def queue
         ::Resque::Mailer.default_queue_name
+      end
+
+      def resque
+        ::Resque::Mailer.default_queue_target
       end
 
       def excluded_environment?(name)

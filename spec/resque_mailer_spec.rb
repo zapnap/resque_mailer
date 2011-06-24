@@ -1,5 +1,9 @@
 require File.join(File.expand_path(File.dirname(__FILE__)), 'spec_helper')
 
+class FakeResque
+  def self.enqueue(*args); end
+end
+
 class Rails3Mailer < ActionMailer::Base
   include Resque::Mailer
   default :from => "from@example.org", :subject => "Subject"
@@ -11,22 +15,28 @@ class Rails3Mailer < ActionMailer::Base
 end
 
 describe Resque::Mailer do
+  let(:resque) { FakeResque }
+
   before do
+    Resque::Mailer.default_queue_target = resque
     Rails3Mailer.stub(:current_env => :test)
   end
 
+  describe "resque" do
+    it "allows overriding of the default queue target (for testing)" do
+      Resque::Mailer.default_queue_target = FakeResque
+      Rails3Mailer.resque.should == FakeResque
+    end
+  end
+
   describe "queue" do
-    context "when using the default" do
-      it "should return 'mailer'" do
-        Rails3Mailer.queue.should == "mailer"
-      end
+    it "defaults to the 'mailer' queue" do
+      Rails3Mailer.queue.should == "mailer"
     end
 
-    context "when modified by user" do
-      it "should return proper queue name" do
-        Resque::Mailer.default_queue_name = "postal"
-        Rails3Mailer.queue.should == "postal"
-      end
+    it "allows overriding of the default queue name" do
+      Resque::Mailer.default_queue_name = "postal"
+      Rails3Mailer.queue.should == "postal"
     end
   end
 
@@ -37,16 +47,12 @@ describe Resque::Mailer do
       }
     end
 
-    before(:each) do
-      Resque.stub(:enqueue)
-    end
-
     it 'should not deliver the email synchronously' do
       lambda { @delivery.call }.should_not change(ActionMailer::Base.deliveries, :size)
     end
 
     it 'should place the deliver action on the Resque "mailer" queue' do
-      Resque.should_receive(:enqueue).with(Rails3Mailer, :test_mail, Rails3Mailer::MAIL_PARAMS)
+      resque.should_receive(:enqueue).with(Rails3Mailer, :test_mail, Rails3Mailer::MAIL_PARAMS)
       @delivery.call
     end
 
@@ -54,7 +60,7 @@ describe Resque::Mailer do
       it 'should not deliver through Resque for excluded environments' do
         Resque::Mailer.stub(:excluded_environments => [:custom])
         Rails3Mailer.should_receive(:current_env).and_return(:custom)
-        Resque.should_not_receive(:enqueue)
+        resque.should_not_receive(:enqueue)
         @delivery.call
       end
     end
