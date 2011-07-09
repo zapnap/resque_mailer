@@ -15,7 +15,7 @@ module Resque
 
     self.default_queue_target = ::Resque
     self.default_queue_name = "mailer"
-    self.excluded_environments = [:test]
+    self.excluded_environments = []
 
     module ClassMethods
       def current_env
