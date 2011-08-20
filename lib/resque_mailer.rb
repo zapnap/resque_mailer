@@ -26,16 +26,7 @@ module Resque
         return super if environment_excluded?
 
         if action_methods.include?(method_name.to_s)
-          resque = self.resque
-          mailer_class = self
-          super.tap do |resque_mail|
-            resque_mail.class_eval do
-              define_method(:deliver) do
-                resque.enqueue(mailer_class, method_name, *args)
-                self
-              end
-            end
-          end
+          MessageDecoy.new(self, method_name, *args)
         else
           super
         end
@@ -59,6 +50,34 @@ module Resque
 
       def excluded_environment?(name)
         ::Resque::Mailer.excluded_environments && ::Resque::Mailer.excluded_environments.include?(name.to_sym)
+      end
+    end
+
+    class MessageDecoy
+      def initialize(mailer_class, method_name, *args)
+        @mailer_class = mailer_class
+        @method_name = method_name
+        *@args = *args
+      end
+
+      def resque
+        ::Resque::Mailer.default_queue_target
+      end
+
+      def actual_message
+        @actual_message ||= @mailer_class.send(:new, @method_name, *@args).message
+      end
+
+      def deliver
+        resque.enqueue(@mailer_class, @method_name, *@args)
+      end
+
+      def deliver!
+        actual_message.deliver
+      end
+
+      def method_missing(method_name, *args)
+        actual_message.send(method_name, *args)
       end
     end
   end

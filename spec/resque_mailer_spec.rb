@@ -10,6 +10,7 @@ class Rails3Mailer < ActionMailer::Base
   MAIL_PARAMS = { :to => "crafty@example.org" }
 
   def test_mail(*params)
+    Resque::Mailer.success!
     mail(*params)
   end
 end
@@ -19,6 +20,7 @@ describe Resque::Mailer do
 
   before do
     Resque::Mailer.default_queue_target = resque
+    Resque::Mailer.stub(:success!)
     Rails3Mailer.stub(:current_env => :test)
   end
 
@@ -64,6 +66,11 @@ describe Resque::Mailer do
         @delivery.call
       end
     end
+
+    it 'should not invoke the method body more than once' do
+      Resque::Mailer.should_not_receive(:success!)
+      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver
+    end
   end
 
   describe '#deliver!' do
@@ -72,7 +79,7 @@ describe Resque::Mailer do
     end
   end
 
-  describe "perform" do
+  describe 'perform' do
     it 'should perform a queued mailer job' do
       lambda {
         Rails3Mailer.perform(:test_mail, Rails3Mailer::MAIL_PARAMS)
@@ -80,11 +87,16 @@ describe Resque::Mailer do
     end
   end
 
-  describe "original mail methods" do
-    it "should be preserved" do
+  describe 'original mail methods' do
+    it 'should be preserved' do
       Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).subject.should == 'Subject'
       Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).from.should include('from@example.org')
       Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).to.should include('crafty@example.org')
+    end
+
+    it 'should require execution of the method body prior to queueing' do
+      Resque::Mailer.should_receive(:success!).once
+      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).subject
     end
   end
 end
