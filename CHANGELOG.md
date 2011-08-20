@@ -1,3 +1,8 @@
+### 2.0.2 / 2011-08-20
+
+* Fixed deliver vs deliver! issue so mail interceptors will work as
+  expected
+
 ### 2.0.1 / 2011-08-19
 
 * Restore the mailer proxy object so mailer method bodies never get
