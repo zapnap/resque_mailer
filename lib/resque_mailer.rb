@@ -33,7 +33,7 @@ module Resque
       end
 
       def perform(action, *args)
-        self.send(:new, action, *args).message.deliver!
+        self.send(:new, action, *args).message.deliver
       end
 
       def environment_excluded?
@@ -73,7 +73,7 @@ module Resque
       end
 
       def deliver!
-        actual_message.deliver
+        actual_message.deliver!
       end
 
       def method_missing(method_name, *args)
