@@ -1,3 +1,8 @@
+### 2.0.1 / 2011-08-19
+
+* Restore the mailer proxy object so mailer method bodies never get
+  invoked more than once accidentally (not required to be idempotent)
+
 ### 2.0.0 / 2011-06-24
 
 * Removed support for legacy Rails 2.x applications (please use v1.x)
