@@ -16,7 +16,7 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "resque_mailer"
+    gem.name = "bitlove-resque_mailer"
     gem.summary = %Q{Rails plugin for sending asynchronous email with ActionMailer and Resque}
     gem.description = %Q{Rails plugin for sending asynchronous email with ActionMailer and Resque}
     gem.email = "nap@zerosum.org"
