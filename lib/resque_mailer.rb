@@ -51,6 +51,10 @@ module Resque
       def excluded_environment?(name)
         ::Resque::Mailer.excluded_environments && ::Resque::Mailer.excluded_environments.include?(name.to_sym)
       end
+
+      def deliver?
+        true
+      end
     end
 
     class MessageDecoy
@@ -69,7 +73,9 @@ module Resque
       end
 
       def deliver
-        resque.enqueue(@mailer_class, @method_name, *@args)
+        if @mailer_class.deliver?
+          resque.enqueue(@mailer_class, @method_name, *@args)
+        end
       end
 
       def deliver!
