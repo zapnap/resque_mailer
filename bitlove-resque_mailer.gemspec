@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
     "README.md",
     "Rakefile",
     "VERSION",
+    "bitlove-resque_mailer.gemspec",
     "lib/resque_mailer.rb",
     "rails/init.rb",
     "resque_mailer.gemspec",
