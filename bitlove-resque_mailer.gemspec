@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "bitlove-resque_mailer"
-  s.version = "2.0.3"
+  s.version = "2.0.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Nick Plante"]
-  s.date = "2011-10-05"
+  s.date = "2011-10-07"
   s.description = "Rails plugin for sending asynchronous email with ActionMailer and Resque"
   s.email = "nap@zerosum.org"
   s.extra_rdoc_files = [
