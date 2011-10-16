@@ -33,7 +33,7 @@ module Resque
       end
 
       def perform(action, *args)
-        self.send(:new, action, *args).message.deliver
+        self.send(:new, action, *args.map { |o| o.is_a?(Hash) && o.has_key?("class_name") && o.has_key?("id") ? o["class_name"].constantize.find(o["id"]) : o }).message.deliver
       end
 
       def environment_excluded?
@@ -51,13 +51,23 @@ module Resque
       def excluded_environment?(name)
         ::Resque::Mailer.excluded_environments && ::Resque::Mailer.excluded_environments.include?(name.to_sym)
       end
+
+      def deliver?
+        true
+      end
     end
 
     class MessageDecoy
       def initialize(mailer_class, method_name, *args)
         @mailer_class = mailer_class
         @method_name = method_name
-        *@args = *args
+        *@args = *args.map do |object|
+          if object.is_a?(ActiveRecord::Base)
+            {:class_name => object.class.name, :id => object.id}
+          else
+            object
+          end
+        end
       end
 
       def resque
@@ -69,7 +79,9 @@ module Resque
       end
 
       def deliver
-        resque.enqueue(@mailer_class, @method_name, *@args)
+        if @mailer_class.deliver?
+          resque.enqueue(@mailer_class, @method_name, *@args)
+        end
       end
 
       def deliver!
