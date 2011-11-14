@@ -1,3 +1,5 @@
+require 'resque_mailer/version'
+
 module Resque
   module Mailer
     class << self
