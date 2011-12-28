@@ -41,7 +41,11 @@ module Resque
       end
 
       def queue
-        ::Resque::Mailer.default_queue_name
+        @queue || ::Resque::Mailer.default_queue_name
+      end
+
+      def queue=(name)
+        @queue = name
       end
 
       def resque

@@ -15,6 +15,10 @@ class Rails3Mailer < ActionMailer::Base
   end
 end
 
+class PriorityMailer < Rails3Mailer
+  self.queue = 'priority_mailer'
+end
+
 describe Resque::Mailer do
   let(:resque) { FakeResque }
 
@@ -39,6 +43,10 @@ describe Resque::Mailer do
     it "allows overriding of the default queue name" do
       Resque::Mailer.default_queue_name = "postal"
       Rails3Mailer.queue.should == "postal"
+    end
+
+    it "allows overriding of the local queue name" do
+      PriorityMailer.queue.should == "priority_mailer"
     end
   end
 
