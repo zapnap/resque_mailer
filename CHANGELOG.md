@@ -1,3 +1,8 @@
+### EDGE / 2011-12-28
+
+* Added ability to override local queue name (example scenario: using
+  two different queues for different mail priority levels)
+
 ### 2.0.2 / 2011-08-20
 
 * Fixed deliver vs deliver! issue so mail interceptors will work as
