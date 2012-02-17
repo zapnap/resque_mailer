@@ -1,5 +1,6 @@
 ### EDGE / 2012-02-17
 
+* Removed jeweler as a dependency (managing gem directly via Bundler)
 * Removed Resque dependency for compatibility with Resque forks
   (mongo-resque, etc)
 * Message decoy acts more like a real message (to\_s)
