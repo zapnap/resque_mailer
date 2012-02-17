@@ -64,6 +64,8 @@ module Resque
     end
 
     class MessageDecoy
+      delegate :to_s, :to => :actual_message
+      
       def initialize(mailer_class, method_name, *args)
         @mailer_class = mailer_class
         @method_name = method_name
