@@ -92,6 +92,4 @@ configure the environments that should be excluded like so:
 
 ## Credits
 
-This work was originally inspired by delayed_job_mailer
-(http://github.com/andersondias/delayed_job_mailer) by Anderson Dias. Enhanced
-and modified to work with Resque by Nick Plante.
+Developed by Nick Plante with help from a number of [contributors](https://github.com/zapnap/resque_mailer/contributors).
