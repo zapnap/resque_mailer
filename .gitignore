@@ -20,5 +20,6 @@ doc
 pkg
 .yardoc
 .rvmrc
+*.gem
 
 ## PROJECT::SPECIFIC

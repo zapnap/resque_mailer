@@ -1,3 +1,9 @@
+### EDGE / 2012-02-17
+
+* Removed Resque dependency for compatibility with Resque forks
+  (mongo-resque, etc)
+* Message decoy acts more like a real message (to\_s)
+
 ### 2.0.3 / 2012-02-17
 
 * Added ability to override local queue name (example scenario: using
@@ -23,7 +29,7 @@
 
 ### 1.0.1 / 2010-12-21
 
-* Respect ActionMailer::Base.perform_deliveries
+* Respect ActionMailer::Base.perform\_deliveries
 
 ### v1.0.0 / 2010-07-28
 
