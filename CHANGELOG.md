@@ -1,4 +1,4 @@
-### EDGE / 2011-12-28
+### 2.0.3 / 2012-02-17
 
 * Added ability to override local queue name (example scenario: using
   two different queues for different mail priority levels)
