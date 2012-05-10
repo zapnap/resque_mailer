@@ -100,6 +100,26 @@ module Resque
         end
       end
 
+      def deliver_at(time)
+        unless resque.respond_to? :enqueue_at
+          raise "You need to install resque-scheduler to use deliver_at"
+        end
+
+        if @mailer_class.deliver?
+          resque.enqueue_at(time, @mailer_class, @method_name, *@args)
+        end
+      end
+
+      def deliver_in(time)
+        unless resque.respond_to? :enqueue_in
+          raise "You need to install resque-scheduler to use deliver_in"
+        end
+
+        if @mailer_class.deliver?
+          resque.enqueue_in(time, @mailer_class, @method_name, *@args)
+        end
+      end
+
       def deliver!
         actual_message.deliver!
       end
