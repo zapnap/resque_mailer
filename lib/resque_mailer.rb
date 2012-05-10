@@ -65,7 +65,7 @@ module Resque
 
     class MessageDecoy
       delegate :to_s, :to => :actual_message
-      
+
       def initialize(mailer_class, method_name, *args)
         @mailer_class = mailer_class
         @method_name = method_name
@@ -83,6 +83,26 @@ module Resque
       def deliver
         if @mailer_class.deliver?
           resque.enqueue(@mailer_class, @method_name, *@args)
+        end
+      end
+
+      def deliver_at(time)
+        unless resque.respond_to? :enqueue_at
+          raise "You need to install resque-scheduler to use deliver_at"
+        end
+
+        if @mailer_class.deliver?
+          resque.enqueue_at(time, @mailer_class, @method_name, *@args)
+        end
+      end
+
+      def deliver_in(time)
+        unless resque.respond_to? :enqueue_in
+          raise "You need to install resque-scheduler to use deliver_in"
+        end
+
+        if @mailer_class.deliver?
+          resque.enqueue_in(time, @mailer_class, @method_name, *@args)
         end
       end
 
