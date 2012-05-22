@@ -30,7 +30,7 @@ describe Resque::Mailer do
   before do
     Resque::Mailer.default_queue_target = resque
     Resque::Mailer.stub(:success!)
-    Rails3Mailer.stub(:current_env => :test)
+    Resque::Mailer::MessageDecoy.any_instance.stub(:current_env).and_return(:test)
   end
 
   describe "resque" do
@@ -74,7 +74,7 @@ describe Resque::Mailer do
     context "when current env is excluded" do
       it 'should not deliver through Resque for excluded environments' do
         Resque::Mailer.stub(:excluded_environments => [:custom])
-        Rails3Mailer.should_receive(:current_env).and_return(:custom)
+        Resque::Mailer::MessageDecoy.any_instance.should_receive(:current_env).and_return(:custom)
         resque.should_not_receive(:enqueue)
         @delivery.call
       end
@@ -111,6 +111,15 @@ describe Resque::Mailer do
         resque.should_receive(:enqueue_at).with(@time, Rails3Mailer, :test_mail, Rails3Mailer::MAIL_PARAMS)
         @delivery.call
       end
+
+      context "when current env is excluded" do
+        it 'should not deliver through Resque for excluded environments' do
+          Resque::Mailer.stub(:excluded_environments => [:custom])
+          Resque::Mailer::MessageDecoy.any_instance.should_receive(:current_env).and_return(:custom)
+          resque.should_not_receive(:enqueue_at)
+          @delivery.call
+        end
+      end
     end
   end
 
@@ -138,6 +147,15 @@ describe Resque::Mailer do
       it 'should place the deliver action on the Resque "mailer" queue' do
         resque.should_receive(:enqueue_in).with(@time, Rails3Mailer, :test_mail, Rails3Mailer::MAIL_PARAMS)
         @delivery.call
+      end
+
+      context "when current env is excluded" do
+        it 'should not deliver through Resque for excluded environments' do
+          Resque::Mailer.stub(:excluded_environments => [:custom])
+          Resque::Mailer::MessageDecoy.any_instance.should_receive(:current_env).and_return(:custom)
+          resque.should_not_receive(:enqueue_in)
+          @delivery.call
+        end
       end
     end
   end
