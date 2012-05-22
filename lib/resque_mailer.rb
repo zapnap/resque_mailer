@@ -20,13 +20,7 @@ module Resque
     self.excluded_environments = [:test]
 
     module ClassMethods
-      def current_env
-        ::Rails.env
-      end
-
       def method_missing(method_name, *args)
-        return super if environment_excluded?
-
         if action_methods.include?(method_name.to_s)
           MessageDecoy.new(self, method_name, *args)
         else
@@ -36,10 +30,6 @@ module Resque
 
       def perform(action, *args)
         self.send(:new, action, *args).message.deliver
-      end
-
-      def environment_excluded?
-        !ActionMailer::Base.perform_deliveries || excluded_environment?(current_env)
       end
 
       def queue
@@ -54,10 +44,6 @@ module Resque
         ::Resque::Mailer.default_queue_target
       end
 
-      def excluded_environment?(name)
-        ::Resque::Mailer.excluded_environments && ::Resque::Mailer.excluded_environments.include?(name.to_sym)
-      end
-
       def deliver?
         true
       end
@@ -65,7 +51,7 @@ module Resque
 
     class MessageDecoy
       delegate :to_s, :to => :actual_message
-      
+
       def initialize(mailer_class, method_name, *args)
         @mailer_class = mailer_class
         @method_name = method_name
@@ -76,13 +62,51 @@ module Resque
         ::Resque::Mailer.default_queue_target
       end
 
+      def current_env
+        ::Rails.env
+      end
+
+      def environment_excluded?
+        !ActionMailer::Base.perform_deliveries || excluded_environment?(current_env)
+      end
+
+      def excluded_environment?(name)
+        ::Resque::Mailer.excluded_environments && ::Resque::Mailer.excluded_environments.include?(name.to_sym)
+      end
+
       def actual_message
         @actual_message ||= @mailer_class.send(:new, @method_name, *@args).message
       end
 
       def deliver
+        return deliver! if environment_excluded?
+
         if @mailer_class.deliver?
           resque.enqueue(@mailer_class, @method_name, *@args)
+        end
+      end
+
+      def deliver_at(time)
+        return deliver! if environment_excluded?
+
+        unless resque.respond_to? :enqueue_at
+          raise "You need to install resque-scheduler to use deliver_at"
+        end
+
+        if @mailer_class.deliver?
+          resque.enqueue_at(time, @mailer_class, @method_name, *@args)
+        end
+      end
+
+      def deliver_in(time)
+        return deliver! if environment_excluded?
+
+        unless resque.respond_to? :enqueue_in
+          raise "You need to install resque-scheduler to use deliver_in"
+        end
+
+        if @mailer_class.deliver?
+          resque.enqueue_in(time, @mailer_class, @method_name, *@args)
         end
       end
 

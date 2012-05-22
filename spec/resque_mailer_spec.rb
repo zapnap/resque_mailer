@@ -4,6 +4,11 @@ class FakeResque
   def self.enqueue(*args); end
 end
 
+class FakeResqueWithScheduler < FakeResque
+  def self.enqueue_in(time, *args); end
+  def self.enqueue_at(time, *args); end
+end
+
 class Rails3Mailer < ActionMailer::Base
   include Resque::Mailer
   default :from => "from@example.org", :subject => "Subject"
@@ -25,7 +30,7 @@ describe Resque::Mailer do
   before do
     Resque::Mailer.default_queue_target = resque
     Resque::Mailer.stub(:success!)
-    Rails3Mailer.stub(:current_env => :test)
+    Resque::Mailer::MessageDecoy.any_instance.stub(:current_env).and_return(:test)
   end
 
   describe "resque" do
@@ -69,7 +74,7 @@ describe Resque::Mailer do
     context "when current env is excluded" do
       it 'should not deliver through Resque for excluded environments' do
         Resque::Mailer.stub(:excluded_environments => [:custom])
-        Rails3Mailer.should_receive(:current_env).and_return(:custom)
+        Resque::Mailer::MessageDecoy.any_instance.should_receive(:current_env).and_return(:custom)
         resque.should_not_receive(:enqueue)
         @delivery.call
       end
@@ -78,6 +83,80 @@ describe Resque::Mailer do
     it 'should not invoke the method body more than once' do
       Resque::Mailer.should_not_receive(:success!)
       Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver
+    end
+  end
+
+  describe '#deliver_at' do
+    before(:all) do
+      @time = Time.now
+      @delivery = lambda {
+        Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver_at(@time)
+      }
+    end
+
+    context "without resque-scheduler installed" do
+      it "raises an error" do
+        lambda { @delivery.call }.should raise_exception
+      end
+    end
+
+    context "with resque-scheduler installed" do
+      let(:resque) { FakeResqueWithScheduler }
+
+      it 'should not deliver the email synchronously' do
+        lambda { @delivery.call }.should_not change(ActionMailer::Base.deliveries, :size)
+      end
+
+      it 'should place the deliver action on the Resque "mailer" queue' do
+        resque.should_receive(:enqueue_at).with(@time, Rails3Mailer, :test_mail, Rails3Mailer::MAIL_PARAMS)
+        @delivery.call
+      end
+
+      context "when current env is excluded" do
+        it 'should not deliver through Resque for excluded environments' do
+          Resque::Mailer.stub(:excluded_environments => [:custom])
+          Resque::Mailer::MessageDecoy.any_instance.should_receive(:current_env).and_return(:custom)
+          resque.should_not_receive(:enqueue_at)
+          @delivery.call
+        end
+      end
+    end
+  end
+
+  describe '#deliver_in' do
+    before(:all) do
+      @time = 1234567
+      @delivery = lambda {
+        Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver_in(@time)
+      }
+    end
+
+    context "without resque-scheduler installed" do
+      it "raises an error" do
+        lambda { @delivery.call }.should raise_exception
+      end
+    end
+
+    context "with resque-scheduler installed" do
+      let(:resque) { FakeResqueWithScheduler }
+
+      it 'should not deliver the email synchronously' do
+        lambda { @delivery.call }.should_not change(ActionMailer::Base.deliveries, :size)
+      end
+
+      it 'should place the deliver action on the Resque "mailer" queue' do
+        resque.should_receive(:enqueue_in).with(@time, Rails3Mailer, :test_mail, Rails3Mailer::MAIL_PARAMS)
+        @delivery.call
+      end
+
+      context "when current env is excluded" do
+        it 'should not deliver through Resque for excluded environments' do
+          Resque::Mailer.stub(:excluded_environments => [:custom])
+          Resque::Mailer::MessageDecoy.any_instance.should_receive(:current_env).and_return(:custom)
+          resque.should_not_receive(:enqueue_in)
+          @delivery.call
+        end
+      end
     end
   end
 
