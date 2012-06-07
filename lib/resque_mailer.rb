@@ -3,7 +3,7 @@ require 'resque_mailer/version'
 module Resque
   module Mailer
     class << self
-      attr_accessor :default_queue_name, :default_queue_target
+      attr_accessor :default_queue_name, :default_queue_target, :current_env
       attr_reader :excluded_environments
 
       def excluded_environments=(envs)
@@ -21,7 +21,11 @@ module Resque
 
     module ClassMethods
       def current_env
-        ::Rails.env if defined?(Rails)
+        if defined?(Rails)
+          ::Resque::Mailer.current_env || ::Rails.env
+        else
+          ::Resque::Mailer.current_env
+        end
       end
 
       def method_missing(method_name, *args)
