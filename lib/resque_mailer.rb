@@ -21,7 +21,7 @@ module Resque
 
     module ClassMethods
       def current_env
-        ::Rails.env
+        ::Rails.env if defined?(Rails)
       end
 
       def method_missing(method_name, *args)
@@ -55,7 +55,7 @@ module Resque
       end
 
       def excluded_environment?(name)
-        ::Resque::Mailer.excluded_environments && ::Resque::Mailer.excluded_environments.include?(name.to_sym)
+        ::Resque::Mailer.excluded_environments && ::Resque::Mailer.excluded_environments.include?(name.try(:to_sym))
       end
 
       def deliver?
@@ -65,7 +65,7 @@ module Resque
 
     class MessageDecoy
       delegate :to_s, :to => :actual_message
-      
+
       def initialize(mailer_class, method_name, *args)
         @mailer_class = mailer_class
         @method_name = method_name

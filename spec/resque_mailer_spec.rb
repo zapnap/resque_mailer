@@ -25,7 +25,6 @@ describe Resque::Mailer do
   before do
     Resque::Mailer.default_queue_target = resque
     Resque::Mailer.stub(:success!)
-    Rails3Mailer.stub(:current_env => :test)
   end
 
   describe "resque" do
