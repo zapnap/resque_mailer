@@ -1,9 +1,10 @@
-### EDGE / 2012-02-17
+### 2.1.0 / 2012-02-17
 
+* Message decoy acts more like a real message (to\_s)
 * Removed jeweler as a dependency (managing gem directly via Bundler)
 * Removed Resque dependency for compatibility with Resque forks
   (mongo-resque, etc)
-* Message decoy acts more like a real message (to\_s)
+* Add support for non-Rails applications (Fabio Kreusch)
 
 ### 2.0.3 / 2012-02-17
 
