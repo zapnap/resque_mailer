@@ -1,4 +1,4 @@
-### 2.1.0 / 2012-02-17
+### 2.1.0 / 2012-06-09
 
 * Message decoy acts more like a real message (to\_s)
 * Removed jeweler as a dependency (managing gem directly via Bundler)
