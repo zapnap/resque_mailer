@@ -92,6 +92,22 @@ describe Resque::Mailer do
         Rails3Mailer.perform(:test_mail, Rails3Mailer::MAIL_PARAMS)
       }.should change(ActionMailer::Base.deliveries, :size).by(1)
     end
+
+    it 'log errors' do
+      message = mock :message
+      mailer = mock(:mailer, message: message)
+      logger = mock :logger
+      Rails3Mailer.logger = logger
+
+      Rails3Mailer.should_receive(:new).and_return mailer
+      exception = Exception.new("An error")
+      message.should_receive(:deliver).and_raise(exception)
+      logger.should_receive(:error).at_least(:once)
+
+      lambda {
+        Rails3Mailer.perform(:test_mail, Rails3Mailer::MAIL_PARAMS)
+      }.should raise_error(Exception, "Unable to deliver email: [An error]")
+    end
   end
 
   describe 'original mail methods' do
