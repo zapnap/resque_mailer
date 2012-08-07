@@ -1,3 +1,6 @@
+### EDGE / 2012-08-07
+* Added logging for failed deliveries (Mike Swieton)
+
 ### 2.1.0 / 2012-06-09
 
 * Message decoy acts more like a real message (to\_s)
