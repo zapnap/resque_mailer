@@ -3,7 +3,7 @@ require 'resque_mailer/version'
 module Resque
   module Mailer
     class << self
-      attr_accessor :default_queue_name, :default_queue_target, :current_env
+      attr_accessor :default_queue_name, :default_queue_target, :current_env, :logger
       attr_reader :excluded_environments
 
       def excluded_environments=(envs)
@@ -15,6 +15,7 @@ module Resque
       end
     end
 
+    self.logger = nil
     self.default_queue_target = ::Resque
     self.default_queue_name = "mailer"
     self.excluded_environments = [:test]
@@ -39,7 +40,17 @@ module Resque
       end
 
       def perform(action, *args)
-        self.send(:new, action, *args).message.deliver
+        begin
+          self.send(:new, action, *args).message.deliver
+        rescue Exception => ex
+          if logger
+            logger.error "Unable to deliver email [#{action}]:"
+            logger.error ex
+            logger.error ex.backtrace.join("\n\t")
+          end
+
+          raise ex.class, "Unable to deliver email: [#{ex.message}]", ex.backtrace
+        end
       end
 
       def environment_excluded?
