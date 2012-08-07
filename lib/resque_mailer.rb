@@ -44,8 +44,7 @@ module Resque
           self.send(:new, action, *args).message.deliver
         rescue Exception => ex
           if logger
-            logger.error "Unable to deliver email [#{action}]:"
-            logger.error ex
+            logger.error "Unable to deliver email [#{action}]: #{ex}"
             logger.error ex.backtrace.join("\n\t")
           end
 
