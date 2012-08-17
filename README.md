@@ -15,7 +15,7 @@ Include Resque::Mailer in your ActionMailer subclass(es) like this:
       include Resque::Mailer
     end
 
-Now, when <tt>MyMailer.subject_email(params).deliver</tt> is called, an entry
+Now, when `MyMailer.subject_email(params).deliver` is called, an entry
 will be created in the job queue. Your Resque workers will be able to deliver
 this message for you. The queue we're using is imaginatively named +mailer+,
 so just make sure your workers know about it and are loading your environment:
@@ -34,7 +34,7 @@ identifiers. Then, in your delivery method, you can look up the record from
 the id and use it as needed.
 
 If you want to set a different default queue name for your mailer, you can
-change the <tt>default_queue_name</tt> property like so:
+change the `default_queue_name` property like so:
 
     # config/initializers/resque_mailer.rb
     Resque::Mailer.default_queue_name = 'application_specific_mailer'
@@ -81,7 +81,7 @@ configure the environments that should be excluded like so:
     # config/initializers/resque_mailer.rb
     Resque::Mailer.excluded_environments = [:test, :cucumber]
 
-Note: you must define current_env if use it in non-rails project
+Note: Define `current_env` if using Resque::Mailer in a non-Rails project:
 
     Resque::Mailer.current_env = :production
 
