@@ -33,7 +33,7 @@ database-backed objects as parameters in your mailer and instead pass record
 identifiers. Then, in your delivery method, you can look up the record from
 the id and use it as needed.
 
-If you want to set a different default queue name for your mailer, you can 
+If you want to set a different default queue name for your mailer, you can
 change the <tt>default_queue_name</tt> property like so:
 
     # config/initializers/resque_mailer.rb
@@ -80,6 +80,11 @@ configure the environments that should be excluded like so:
 
     # config/initializers/resque_mailer.rb
     Resque::Mailer.excluded_environments = [:test, :cucumber]
+
+Note: you must define current_env if use it in non-rails project
+
+    Resque::Mailer.current_env = :production
+
 
 ## Note on Patches / Pull Requests
 
