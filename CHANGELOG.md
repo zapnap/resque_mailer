@@ -1,5 +1,7 @@
-### EDGE / 2012-08-07
+### EDGE / 2012-08-22
 * Added logging for failed deliveries (Mike Swieton)
+* Add `deliver_at` and `deliver_in` methods for scheduling mail in the
+  future if resque-scheduler is installed (Harry Marr)
 
 ### 2.1.0 / 2012-06-09
 
