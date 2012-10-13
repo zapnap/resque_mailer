@@ -45,8 +45,8 @@ module Resque
             logger.error "Unable to deliver email [#{action}]: #{ex}"
             logger.error ex.backtrace.join("\n\t")
           end
-
-          raise ex.class, "Unable to deliver email: [#{ex.message}]", ex.backtrace
+          
+          raise ex
         end
       end
 
