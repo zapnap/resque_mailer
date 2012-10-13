@@ -1,5 +1,6 @@
-### EDGE / 2012-08-22
+### EDGE / 2012-10-12
 * Added logging for failed deliveries (Mike Swieton)
+* Fixed / preserved exceptions for template renders (Sidharth Shanker)
 * Add `deliver_at` and `deliver_in` methods for scheduling mail in the
   future if resque-scheduler is installed (Harry Marr)
 
