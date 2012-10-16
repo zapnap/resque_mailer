@@ -79,6 +79,22 @@ module Resque
       def resque
         ::Resque::Mailer.default_queue_target
       end
+      
+      def current_env
+        if defined?(Rails)
+          ::Resque::Mailer.current_env || ::Rails.env
+        else
+          ::Resque::Mailer.current_env
+        end
+      end
+      
+      def environment_excluded?
+        !ActionMailer::Base.perform_deliveries || excluded_environment?(current_env)
+      end
+
+      def excluded_environment?(name)
+        ::Resque::Mailer.excluded_environments && ::Resque::Mailer.excluded_environments.include?(name.try(:to_sym))
+      end
 
       def actual_message
         @actual_message ||= @mailer_class.send(:new, @method_name, *@args).message
@@ -86,6 +102,16 @@ module Resque
 
       def deliver
         if @mailer_class.deliver?
+          resque.enqueue(@mailer_class, @method_name, *@args)
+        end
+      end
+      
+      def deliver_and_set_queue_name(queue_name)
+        return deliver! if environment_excluded?
+        if !queue_name.nil?
+          ::Resque::Mailer.default_queue_name = queue_name
+        end
+        if @mailer_class.deliver?          
           resque.enqueue(@mailer_class, @method_name, *@args)
         end
       end

@@ -67,7 +67,38 @@ describe Resque::Mailer do
 
     context "when current env is excluded" do
       it 'should not deliver through Resque for excluded environments' do
-        Resque::Mailer.stub(:excluded_environments => [:custom])
+         Resque::Mailer.stub(:excluded_environments => [:custom])
+         Rails3Mailer.should_receive(:current_env).and_return(:custom)
+         resque.should_not_receive(:enqueue)
+         @delivery.call
+      end
+    end
+
+    it 'should not invoke the method body more than once' do
+      Resque::Mailer.should_not_receive(:success!)
+      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver
+    end
+  end
+
+  describe '#deliver_and_set_queue_name' do
+    before(:all) do
+      @queue_name = "test_queue"
+      @delivery = lambda {
+        Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver
+      }
+    end
+    it 'should not deliver the email synchronously' do
+      lambda { @delivery.call }.should_not change(ActionMailer::Base.deliveries, :size)
+    end
+
+    it 'should place the deliver action on the Resque "mailer" queue' do
+      resque.should_receive(:enqueue).with(Rails3Mailer, :test_mail, Rails3Mailer::MAIL_PARAMS)
+      @delivery.call
+    end
+
+    context "when current env is excluded" do
+      it 'should not deliver through Resque for excluded environments' do
+        p Resque::Mailer.stub(:excluded_environments => [:custom])
         Rails3Mailer.should_receive(:current_env).and_return(:custom)
         resque.should_not_receive(:enqueue)
         @delivery.call
@@ -76,7 +107,7 @@ describe Resque::Mailer do
 
     it 'should not invoke the method body more than once' do
       Resque::Mailer.should_not_receive(:success!)
-      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver
+      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver_and_set_queue_name(@queue_name)
     end
   end
 
