@@ -80,7 +80,7 @@ describe Resque::Mailer do
     end
   end
 
-  describe '#deliver_and_set_queue_name' do
+  describe '#deliver_with_queue' do
     before(:all) do
       @queue_name = "test_queue"
       @delivery = lambda {
@@ -107,7 +107,7 @@ describe Resque::Mailer do
 
     it 'should not invoke the method body more than once' do
       Resque::Mailer.should_not_receive(:success!)
-      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver_and_set_queue_name(@queue_name)
+      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver_with_queue(@queue_name)
     end
   end
 

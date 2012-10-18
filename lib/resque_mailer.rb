@@ -106,7 +106,7 @@ module Resque
         end
       end
       
-      def deliver_and_set_queue_name(queue_name)
+      def deliver_with_queue(queue_name)
         return deliver! if environment_excluded?
         if !queue_name.nil?
           ::Resque::Mailer.default_queue_name = queue_name
