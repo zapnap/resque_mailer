@@ -29,6 +29,7 @@ describe Resque::Mailer do
 
   before do
     Resque::Mailer.default_queue_target = resque
+    Resque::Mailer.fallback_to_synchronous = false
     Resque::Mailer.stub(:success!)
     Resque::Mailer::MessageDecoy.any_instance.stub(:current_env).and_return(:test)
   end
@@ -83,6 +84,22 @@ describe Resque::Mailer do
     it 'should not invoke the method body more than once' do
       Resque::Mailer.should_not_receive(:success!)
       Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver
+    end
+
+    context "when fallback_to_synchronous is true" do
+      before do
+        Resque::Mailer.fallback_to_synchronous = true
+      end
+
+      context "when redis is not available" do
+        before do
+          Resque::Mailer.default_queue_target.stub(:enqueue).and_raise(Errno::ECONNREFUSED)
+        end
+
+        it 'should deliver the email synchronously' do
+          lambda { @delivery.call }.should change(ActionMailer::Base.deliveries, :size).by(1)
+        end
+      end
     end
   end
 
