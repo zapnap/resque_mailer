@@ -186,7 +186,7 @@ describe Resque::Mailer do
 
       lambda {
         Rails3Mailer.perform(:test_mail, Rails3Mailer::MAIL_PARAMS)
-      }.should raise_error(Exception, "Unable to deliver email: [An error]")
+      }.should raise_error(Exception, "An error")
     end
   end
 
