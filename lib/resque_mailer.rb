@@ -3,7 +3,7 @@ require 'resque_mailer/version'
 module Resque
   module Mailer
     class << self
-      attr_accessor :default_queue_name, :default_queue_target, :current_env, :logger
+      attr_accessor :default_queue_name, :default_queue_target, :current_env, :logger, :fallback_to_synchronous
       attr_reader :excluded_environments
 
       def excluded_environments=(envs)
@@ -104,7 +104,11 @@ module Resque
         return deliver! if environment_excluded?
 
         if @mailer_class.deliver?
-          resque.enqueue(@mailer_class, @method_name, *@args)
+          begin
+            resque.enqueue(@mailer_class, @method_name, *@args)
+          rescue Errno::ECONNREFUSED
+            deliver!
+          end
         end
       end
 
