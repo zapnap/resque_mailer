@@ -1,3 +1,7 @@
+### EDGE / 2012-12-01
+* Added optional support for synchronous fallback (Lee Edwards and
+  Peter Jaros)
+
 ### 2.2.0 / 2012-12-01
 * Added logging for failed deliveries (Mike Swieton)
 * Fixed / preserved exceptions for template renders (Sidharth Shanker)
