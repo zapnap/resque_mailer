@@ -1,4 +1,4 @@
-### EDGE / 2012-10-12
+### 2.2.0 / 2012-12-01
 * Added logging for failed deliveries (Mike Swieton)
 * Fixed / preserved exceptions for template renders (Sidharth Shanker)
 * Add `deliver_at` and `deliver_in` methods for scheduling mail in the

@@ -51,8 +51,8 @@ If [resque-scheduler](https://github.com/bvandenbos/resque-scheduler) is
 installed, two extra methods will be available: `deliver_at` and `deliver_in`.
 These will enqueue mail for delivery at a specified time in the future.
 
-    # Delivers on the 25th of December, 2012
-    MyMailer.reminder_email(params).deliver_at(Time.parse('2012-12-25'))
+    # Delivers on the 25th of December, 2013
+    MyMailer.reminder_email(params).deliver_at(Time.parse('2013-12-25'))
 
     # Delivers in 7 days
     MyMailer.reminder_email(params).deliver_in(7.days)
