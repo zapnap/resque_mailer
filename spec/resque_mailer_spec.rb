@@ -25,6 +25,17 @@ class PriorityMailer < Rails3Mailer
   self.queue = 'priority_mailer'
 end
 
+class TestSerializer
+  def self.serialize(*args)
+    args.unshift("test")
+  end
+
+  def self.deserialize(data)
+    args.shift
+    args
+  end
+end
+
 describe Resque::Mailer do
   let(:resque) { FakeResque }
   let(:logger) { double(:logger, :error => nil) }
@@ -70,7 +81,7 @@ describe Resque::Mailer do
     end
 
     it 'should place the deliver action on the Resque "mailer" queue' do
-      expect(resque).to receive(:enqueue).with(Rails3Mailer, :test_mail, Rails3Mailer::MAIL_PARAMS)
+      expect(resque).to receive(:enqueue).with(Rails3Mailer, :test_mail, Resque::Mailer.argument_serializer.serialize(Rails3Mailer::MAIL_PARAMS))
       @delivery.call
     end
 
@@ -225,7 +236,7 @@ describe Resque::Mailer do
   describe 'perform' do
     it 'should perform a queued mailer job' do
       lambda {
-        Rails3Mailer.perform(:test_mail, Rails3Mailer::MAIL_PARAMS)
+        Rails3Mailer.perform(:test_mail, Resque::Mailer.argument_serializer.serialize(Rails3Mailer::MAIL_PARAMS))
       }.should change(ActionMailer::Base.deliveries, :size).by(1)
     end
 
@@ -348,6 +359,32 @@ describe Resque::Mailer do
 
     it 'should not admit to responding to non-existent methods' do
       expect(Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).respond_to?(:definitely_not_a_method)).to eq false
+    end
+  end
+
+  describe "when setting a custom argument serializer" do
+    before :all do
+      @old_serializer = Resque::Mailer.argument_serializer
+      Resque::Mailer.argument_serializer = TestSerializer
+    end
+    after :all do
+      Resque::Mailer.argument_serializer = @old_serializer
+    end
+
+    it "should be set" do
+      Resque::Mailer.argument_serializer.should == TestSerializer
+    end
+
+    it "serializes the arguments with the custom serializer" do
+      TestSerializer.stub(:serialize)
+      TestSerializer.should_receive(:serialize)
+      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver
+    end
+
+    it "deserializes the arguments with the custom serializer" do
+      TestSerializer.stub(:deserialize)
+      TestSerializer.should_receive(:deserialize)
+      Rails3Mailer.perform(:test_mail, Resque::Mailer.argument_serializer.serialize(Rails3Mailer::MAIL_PARAMS))
     end
   end
 end
