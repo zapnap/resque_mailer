@@ -31,7 +31,8 @@ Oh, by the way. Don't forget that **your async mailer jobs will be processed by
 a separate worker**. This means that you should resist the temptation to pass
 database-backed objects as parameters in your mailer and instead pass record
 identifiers. Then, in your delivery method, you can look up the record from
-the id and use it as needed.
+the id and use it as needed. If you'd like, you can write your own serializer
+to automate such things; see the section on serializers below.
 
 If you want to set a different default queue name for your mailer, you can
 change the `default_queue_name` property like so:
@@ -75,6 +76,15 @@ other mailers inherit from an AsyncMailer:
         # ...
       end
     end
+
+## Writing an Argument Serializer
+
+By default, the arguments you pass to your mailer are passed as-is to Resque. This
+means you cannot pass things like database-backed objects. If you'd like to write
+your own serializer to do enable such things, simply write a class that implements
+the class methods `self.serialize(*args)` and `self.deserialize(data)` and set
+`Resque::Mailer.argument_serializer = YourSerializerClass` in your resque_mailer
+initializer.
 
 ## Installation
 
