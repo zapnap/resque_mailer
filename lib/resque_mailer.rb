@@ -1,9 +1,10 @@
 require 'resque_mailer/version'
+require 'resque_mailer/pass_thru_serializer'
 
 module Resque
   module Mailer
     class << self
-      attr_accessor :default_queue_name, :default_queue_target, :current_env, :logger, :fallback_to_synchronous
+      attr_accessor :default_queue_name, :default_queue_target, :current_env, :logger, :fallback_to_synchronous, :argument_serializer
       attr_reader :excluded_environments
 
       def excluded_environments=(envs)
@@ -19,6 +20,7 @@ module Resque
     self.default_queue_target = ::Resque
     self.default_queue_name = "mailer"
     self.excluded_environments = [:test]
+    self.argument_serializer = ::Resque::Mailer::PassThruSerializer
 
     module ClassMethods
       def current_env
@@ -37,8 +39,9 @@ module Resque
         end
       end
 
-      def perform(action, *args)
+      def perform(action, serialized_args)
         begin
+          args = ::Resque::Mailer.argument_serializer.deserialize(serialized_args)
           self.send(:new, action, *args).message.deliver
         rescue Exception => ex
           if logger
@@ -78,6 +81,7 @@ module Resque
         @mailer_class = mailer_class
         @method_name = method_name
         *@args = *args
+        @serialized_args = ::Resque::Mailer.argument_serializer.serialize(*args)
       end
 
       def resque
@@ -105,7 +109,7 @@ module Resque
 
         if @mailer_class.deliver?
           begin
-            resque.enqueue(@mailer_class, @method_name, *@args)
+            resque.enqueue(@mailer_class, @method_name, @serialized_args)
           rescue Errno::ECONNREFUSED
             deliver!
           end
