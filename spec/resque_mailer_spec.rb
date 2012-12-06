@@ -208,6 +208,23 @@ describe Resque::Mailer do
         logger.should_receive(:error).at_least(:once)
         expect { subject }.to raise_error(exception)
       end
+
+      context "when error_handler set without raise" do
+        before(:each) do
+          ResqueMailer.error_handler = lambda { |message, exception|
+            @message = message
+            @exception = exception
+          }
+        end
+        it "should pass the message to the handler" do
+          subject
+          @message.should eq(message)
+        end
+        it "should pass the exception to the handler" do
+          subject
+          @exception.should eq(exception)
+        end
+      end
     end
   end
 
