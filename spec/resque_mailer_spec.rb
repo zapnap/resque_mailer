@@ -190,20 +190,46 @@ describe Resque::Mailer do
       }.should change(ActionMailer::Base.deliveries, :size).by(1)
     end
 
-    it 'log errors' do
-      message = mock :message
-      mailer = mock(:mailer, :message => message)
-      logger = mock :logger
-      Rails3Mailer.logger = logger
+    context "when job fails" do
+      let(:message) { mock(:message) }
+      let(:mailer) { mock(:mailer, :message => message) }
+      let(:logger) { mock(:logger, :error => nil) }
+      let(:exception) { Exception.new("An error") }
 
-      Rails3Mailer.should_receive(:new).and_return mailer
-      exception = Exception.new("An error")
-      message.should_receive(:deliver).and_raise(exception)
-      logger.should_receive(:error).at_least(:once)
+      before(:each) do
+        Rails3Mailer.logger = logger
+        Rails3Mailer.stub(:new) { mailer }
+        message.stub(:deliver).and_raise(exception)
+      end
+      
+      subject { Rails3Mailer.perform(:test_mail, Rails3Mailer::MAIL_PARAMS) }
 
-      lambda {
-        Rails3Mailer.perform(:test_mail, Rails3Mailer::MAIL_PARAMS)
-      }.should raise_error(Exception, "An error")
+      it "raises and logs the exception" do
+        logger.should_receive(:error).at_least(:once)
+        expect { subject }.to raise_error(exception)
+      end
+
+      context "when error_handler set" do
+        before(:each) do
+          Resque::Mailer.error_handler = lambda { |mailer, message, exception|
+            @mailer = mailer
+            @message = message
+            @exception = exception
+          }
+        end
+        it "should pass the mailer to the handler" do
+          subject
+          @mailer.should eq(Rails3Mailer)
+        end
+        it "should pass the message to the handler" do
+          subject
+          @message.should eq(message)
+        end
+        it "should pass the exception to the handler" do
+          subject
+          @exception.should eq(exception)
+        end
+      end
     end
   end
 

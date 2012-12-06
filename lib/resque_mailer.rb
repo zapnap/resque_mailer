@@ -3,7 +3,7 @@ require 'resque_mailer/version'
 module Resque
   module Mailer
     class << self
-      attr_accessor :default_queue_name, :default_queue_target, :current_env, :logger, :fallback_to_synchronous
+      attr_accessor :default_queue_name, :default_queue_target, :current_env, :logger, :fallback_to_synchronous, :error_handler
       attr_reader :excluded_environments
 
       def excluded_environments=(envs)
@@ -21,6 +21,7 @@ module Resque
     self.excluded_environments = [:test]
 
     module ClassMethods
+
       def current_env
         if defined?(Rails)
           ::Resque::Mailer.current_env || ::Rails.env
@@ -39,14 +40,19 @@ module Resque
 
       def perform(action, *args)
         begin
-          self.send(:new, action, *args).message.deliver
+          message = self.send(:new, action, *args).message
+          message.deliver
         rescue Exception => ex
-          if logger
-            logger.error "Unable to deliver email [#{action}]: #{ex}"
-            logger.error ex.backtrace.join("\n\t")
+          if Mailer.error_handler
+            Mailer.error_handler.call(self, message, ex)
+          else
+            if logger
+              logger.error "Unable to deliver email [#{action}]: #{ex}"
+              logger.error ex.backtrace.join("\n\t")
+            end
+            
+            raise ex
           end
-          
-          raise ex
         end
       end
 
