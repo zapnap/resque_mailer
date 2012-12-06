@@ -209,12 +209,17 @@ describe Resque::Mailer do
         expect { subject }.to raise_error(exception)
       end
 
-      context "when error_handler set without raise" do
+      context "when error_handler set" do
         before(:each) do
-          ResqueMailer.error_handler = lambda { |message, exception|
+          Resque::Mailer.error_handler = lambda { |mailer, message, exception|
+            @mailer = mailer
             @message = message
             @exception = exception
           }
+        end
+        it "should pass the mailer to the handler" do
+          subject
+          @mailer.should eq(Rails3Mailer)
         end
         it "should pass the message to the handler" do
           subject
