@@ -201,7 +201,7 @@ describe Resque::Mailer do
         Rails3Mailer.stub(:new) { mailer }
         message.stub(:deliver).and_raise(exception)
       end
-      
+
       subject { Rails3Mailer.perform(:test_mail, Rails3Mailer::MAIL_PARAMS) }
 
       it "raises and logs the exception" do
@@ -217,14 +217,17 @@ describe Resque::Mailer do
             @exception = exception
           }
         end
+
         it "should pass the mailer to the handler" do
           subject
           @mailer.should eq(Rails3Mailer)
         end
+
         it "should pass the message to the handler" do
           subject
           @message.should eq(message)
         end
+
         it "should pass the exception to the handler" do
           subject
           @exception.should eq(exception)
