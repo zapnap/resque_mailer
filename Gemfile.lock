@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    resque_mailer (2.2.0)
+    resque_mailer (2.2.1)
       actionmailer (~> 3.0)
 
 GEM
