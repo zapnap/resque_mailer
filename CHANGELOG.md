@@ -1,6 +1,7 @@
-### EDGE / 2012-12-01
+### 2.2.1 / 2012-12-09
 * Added optional support for synchronous fallback (Lee Edwards and
   Peter Jaros)
+* Added optional custom error_handler lambda support (Adam Bird)
 
 ### 2.2.0 / 2012-12-01
 * Added logging for failed deliveries (Mike Swieton)
