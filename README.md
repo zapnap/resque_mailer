@@ -87,12 +87,12 @@ other mailers inherit from an AsyncMailer:
 
 ## Installation
 
-Install it as a plugin or as a gem plugin from Gemcutter:
+Install the gem:
 
     gem install resque_mailer
-    script/plugin install git://github.com/zapnap/resque_mailer.git
 
-    # Rails 3: add it to your Gemfile
+If you're using Bundler to manage your dependencies, you should add it to your Gemfile:
+
     gem 'resque_mailer'
 
 ## Testing
