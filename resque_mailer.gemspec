@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
   s.description = "Rails plugin for sending asynchronous email with ActionMailer and Resque."
 
   s.add_dependency("actionmailer", "~> 3.0")
+  s.add_dependency("resque")
   s.add_development_dependency("rspec", "~> 2.6")
   s.add_development_dependency("yard", ">= 0.6.0")
 
