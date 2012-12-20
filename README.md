@@ -93,6 +93,7 @@ Install the gem:
 
 If you're using Bundler to manage your dependencies, you should add it to your Gemfile:
 
+    gem 'resque' # or a compatible alternative / fork
     gem 'resque_mailer'
 
 ## Testing
