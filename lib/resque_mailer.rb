@@ -1,4 +1,5 @@
 require 'resque_mailer/version'
+require 'resque'
 
 module Resque
   module Mailer
@@ -50,7 +51,7 @@ module Resque
               logger.error "Unable to deliver email [#{action}]: #{ex}"
               logger.error ex.backtrace.join("\n\t")
             end
-            
+
             raise ex
           end
         end
