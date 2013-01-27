@@ -50,7 +50,7 @@ module Resque
               logger.error "Unable to deliver email [#{action}]: #{ex}"
               logger.error ex.backtrace.join("\n\t")
             end
-            
+
             raise ex
           end
         end
@@ -143,7 +143,7 @@ module Resque
       end
 
       def deliver!
-        actual_message.deliver!
+        actual_message.deliver
       end
 
       def method_missing(method_name, *args)
