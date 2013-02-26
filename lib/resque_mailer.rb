@@ -91,7 +91,11 @@ module Resque
       end
 
       def current_env
-        ::Rails.env
+        if defined?(Rails)
+          ::Resque::Mailer.current_env || ::Rails.env
+        else
+          ::Resque::Mailer.current_env
+        end
       end
 
       def environment_excluded?
