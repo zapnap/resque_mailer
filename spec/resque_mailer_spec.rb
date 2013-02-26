@@ -31,7 +31,7 @@ describe Resque::Mailer do
     Resque::Mailer.default_queue_target = resque
     Resque::Mailer.fallback_to_synchronous = false
     Resque::Mailer.stub(:success!)
-    Resque::Mailer::MessageDecoy.any_instance.stub(:current_env).and_return(:test)
+    Resque::Mailer.stub(:current_env => :test)
   end
 
   describe "resque" do
