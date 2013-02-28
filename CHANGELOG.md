@@ -1,3 +1,6 @@
+### EDGE / 2013-02-27
+* MessageDecoy should handle non rails current_env (Hunter Haydel)
+
 ### 2.2.2 / 2013-01-27
 * Fall back to deliver (not deliver!) on actual message, expected
   behavios when perform_deliveries is false, etc.
