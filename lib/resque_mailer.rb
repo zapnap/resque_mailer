@@ -49,7 +49,7 @@ module Resque
           message.deliver
         rescue Exception => ex
           if Mailer.error_handler
-            Mailer.error_handler.call(self, message, ex, action, args)
+            Mailer.error_handler.call(self, action, args, ex)
           else
             if logger
               logger.error "Unable to deliver email [#{action}]: #{ex}"
