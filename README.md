@@ -51,7 +51,11 @@ assigning a lambda to the `error_hander` attribute.
 ```ruby
 Resque::Mailer.error_handler = lambda { |mailer, action, args, exception|
   # Necessary to re-enqueue jobs that receieve the SIGTERM signal
-  Resque.enqueue(mailer, action, *args) if exception.is_a?(Resque::TermException)
+  if exception.is_a?(Resque::TermException)
+    Resque.enqueue(mailer, action, *args)
+  else
+    raise exception
+  end
 }
 ```
 
