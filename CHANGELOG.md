@@ -1,3 +1,6 @@
+### EDGE / 2013-05-05
+* Compatibility for Rails 4 pre-release (Ben Woosley)
+
 ### 2.2.3 / 2013-02-27
 * MessageDecoy should handle non rails current_env (Hunter Haydel)
 
