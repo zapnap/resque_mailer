@@ -26,12 +26,13 @@ end
 
 describe Resque::Mailer do
   let(:resque) { FakeResque }
+  let(:logger) { mock(:logger, :error => nil) }
 
   before do
     Resque::Mailer.default_queue_target = resque
-    Resque::Mailer.fallback_to_synchronous = false
     Resque::Mailer.stub(:success!)
     Resque::Mailer.stub(:current_env => :test)
+    Rails3Mailer.logger = logger
   end
 
   describe "resque" do
@@ -86,19 +87,15 @@ describe Resque::Mailer do
       Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver
     end
 
-    context "when fallback_to_synchronous is true" do
+    context "when redis is not available" do
       before do
-        Resque::Mailer.fallback_to_synchronous = true
+        Resque::Mailer.default_queue_target.stub(:enqueue).and_raise(Errno::ECONNREFUSED)
       end
 
-      context "when redis is not available" do
-        before do
-          Resque::Mailer.default_queue_target.stub(:enqueue).and_raise(Errno::ECONNREFUSED)
-        end
-
-        it 'should deliver the email synchronously' do
-          lambda { @delivery.call }.should change(ActionMailer::Base.deliveries, :size).by(1)
-        end
+      it 'falls back to synchronous delivery automatically' do
+        Resque::Mailer.fallback_to_synchronous = true
+        logger.should_receive(:error).at_least(:once)
+        lambda { @delivery.call }.should change(ActionMailer::Base.deliveries, :size).by(1)
       end
     end
   end
@@ -193,11 +190,9 @@ describe Resque::Mailer do
     context "when job fails" do
       let(:message) { mock(:message) }
       let(:mailer) { mock(:mailer, :message => message) }
-      let(:logger) { mock(:logger, :error => nil) }
       let(:exception) { Exception.new("An error") }
 
       before(:each) do
-        Rails3Mailer.logger = logger
         Rails3Mailer.stub(:new) { mailer }
         message.stub(:deliver).and_raise(exception)
       end

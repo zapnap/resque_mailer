@@ -3,7 +3,7 @@ require 'resque_mailer/version'
 module Resque
   module Mailer
     class << self
-      attr_accessor :default_queue_name, :default_queue_target, :current_env, :logger, :fallback_to_synchronous, :error_handler
+      attr_accessor :default_queue_name, :default_queue_target, :current_env, :logger, :error_handler
       attr_reader :excluded_environments
 
       def excluded_environments=(envs)
@@ -13,9 +13,14 @@ module Resque
       def included(base)
         base.extend(ClassMethods)
       end
+
+      # Deprecated
+      def fallback_to_synchronous=(val)
+        warn "WARNING: fallback_to_synchronous option is deprecated and will be removed in the next release"
+      end
     end
 
-    self.logger = nil
+    self.logger ||= (defined?(Rails) ? Rails.logger : nil)
     self.default_queue_target = ::Resque
     self.default_queue_name = "mailer"
     self.excluded_environments = [:test]
@@ -117,6 +122,7 @@ module Resque
           begin
             resque.enqueue(@mailer_class, @method_name, *@args)
           rescue Errno::ECONNREFUSED
+            logger.error "Unable to connect to Redis; falling back to synchronous mail delivery" if logger
             deliver!
           end
         end
@@ -152,6 +158,10 @@ module Resque
 
       def method_missing(method_name, *args)
         actual_message.send(method_name, *args)
+      end
+
+      def logger
+        @mailer_class.logger
       end
     end
   end
