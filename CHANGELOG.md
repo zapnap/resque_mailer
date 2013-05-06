@@ -1,5 +1,6 @@
-### EDGE / 2013-05-05
+### EDGE / 2013-05-06
 * Compatibility for Rails 4 pre-release (Ben Woosley)
+* Fallback to synchronous is default when connection to Redis fails
 
 ### 2.2.3 / 2013-02-27
 * MessageDecoy should handle non rails current_env (Hunter Haydel)
