@@ -7,6 +7,17 @@ for your background jobs.
 Note that recent (2.0+) versions of Resque::Mailer only work with Rails 3.x.
 For a version compatible with Rails 2, specify v1.x in your Gemfile.
 
+## Installation
+
+Install the gem:
+
+    gem install resque_mailer
+
+If you're using Bundler to manage your dependencies, you should add it to your Gemfile:
+
+    gem 'resque' # or a compatible alternative / fork
+    gem 'resque_mailer'
+
 ## Usage
 
 Include Resque::Mailer in your ActionMailer subclass(es) like this:
@@ -54,20 +65,7 @@ Resque::Mailer.error_handler = lambda { |mailer, message, error|
 }
 ```
 
-### Using with Resque Scheduler
-
-If [resque-scheduler](https://github.com/bvandenbos/resque-scheduler) is
-installed, two extra methods will be available: `deliver_at` and `deliver_in`.
-These will enqueue mail for delivery at a specified time in the future.
-
-    # Delivers on the 25th of December, 2013
-    MyMailer.reminder_email(params).deliver_at(Time.parse('2013-12-25'))
-
-    # Delivers in 7 days
-    MyMailer.reminder_email(params).deliver_in(7.days)
-
-
-## Resque::Mailer as a Project Default
+### Resque::Mailer as a Project Default
 
 If you have a variety of mailers in your application and want all of them to use
 Resque::Mailer by default, you can subclass ActionMailer::Base and have your
@@ -85,16 +83,17 @@ other mailers inherit from an AsyncMailer:
       end
     end
 
-## Installation
+### Using with Resque Scheduler
 
-Install the gem:
+If [resque-scheduler](https://github.com/bvandenbos/resque-scheduler) is
+installed, two extra methods will be available: `deliver_at` and `deliver_in`.
+These will enqueue mail for delivery at a specified time in the future.
 
-    gem install resque_mailer
+    # Delivers on the 25th of December, 2013
+    MyMailer.reminder_email(params).deliver_at(Time.parse('2013-12-25'))
 
-If you're using Bundler to manage your dependencies, you should add it to your Gemfile:
-
-    gem 'resque' # or a compatible alternative / fork
-    gem 'resque_mailer'
+    # Delivers in 7 days
+    MyMailer.reminder_email(params).deliver_in(7.days)
 
 ## Testing
 
