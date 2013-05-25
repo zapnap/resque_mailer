@@ -1,4 +1,4 @@
-### EDGE / 2013-05-06
+### 2.2.4 / 2013-05-06
 * Compatibility for Rails 4 pre-release (Ben Woosley)
 * Fallback to synchronous is default when connection to Redis fails
 * Avoid lazy evaluation of mail when excluded, for use with mail_view 
