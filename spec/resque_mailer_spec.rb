@@ -76,7 +76,7 @@ describe Resque::Mailer do
     context "when current env is excluded" do
       it 'should not deliver through Resque for excluded environments' do
         Resque::Mailer.stub(:excluded_environments => [:custom])
-        Resque::Mailer::MessageDecoy.any_instance.should_receive(:current_env).and_return(:custom)
+        Resque::Mailer::MessageDecoy.any_instance.should_receive(:current_env).twice.and_return(:custom)
         resque.should_not_receive(:enqueue)
         @delivery.call
       end
@@ -129,7 +129,7 @@ describe Resque::Mailer do
       context "when current env is excluded" do
         it 'should not deliver through Resque for excluded environments' do
           Resque::Mailer.stub(:excluded_environments => [:custom])
-          Resque::Mailer::MessageDecoy.any_instance.should_receive(:current_env).and_return(:custom)
+          Resque::Mailer::MessageDecoy.any_instance.should_receive(:current_env).twice.and_return(:custom)
           resque.should_not_receive(:enqueue_at)
           @delivery.call
         end
@@ -166,7 +166,7 @@ describe Resque::Mailer do
       context "when current env is excluded" do
         it 'should not deliver through Resque for excluded environments' do
           Resque::Mailer.stub(:excluded_environments => [:custom])
-          Resque::Mailer::MessageDecoy.any_instance.should_receive(:current_env).and_return(:custom)
+          Resque::Mailer::MessageDecoy.any_instance.should_receive(:current_env).twice.and_return(:custom)
           resque.should_not_receive(:enqueue_in)
           @delivery.call
         end
@@ -241,6 +241,16 @@ describe Resque::Mailer do
     it 'should require execution of the method body prior to queueing' do
       Resque::Mailer.should_receive(:success!).once
       Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).subject
+    end
+    context "when current env is excluded" do
+      it 'should render email immediately' do
+        Resque::Mailer::MessageDecoy.any_instance.stub(:environment_excluded?).and_return(true)
+        resque.should_not_receive(:enqueue_in)
+        params = {:subject => 'abc'}
+        mail = Rails3Mailer.test_mail(params)
+        params[:subject] = 'xyz'
+        mail.to_s.should match('Subject: abc')
+      end
     end
   end
 end

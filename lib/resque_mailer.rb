@@ -89,6 +89,7 @@ module Resque
         @mailer_class = mailer_class
         @method_name = method_name
         *@args = *args
+        actual_message if environment_excluded?
       end
 
       def resque
