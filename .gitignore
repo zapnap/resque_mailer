@@ -21,5 +21,6 @@ pkg
 .yardoc
 .rvmrc
 *.gem
+Gemfile.lock
 
 ## PROJECT::SPECIFIC
