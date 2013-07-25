@@ -26,7 +26,7 @@ end
 
 describe Resque::Mailer do
   let(:resque) { FakeResque }
-  let(:logger) { mock(:logger, :error => nil) }
+  let(:logger) { double(:logger, :error => nil) }
 
   before do
     Resque::Mailer.default_queue_target = resque
@@ -188,8 +188,8 @@ describe Resque::Mailer do
     end
 
     context "when job fails" do
-      let(:message) { mock(:message) }
-      let(:mailer) { mock(:mailer, :message => message) }
+      let(:message) { double(:message) }
+      let(:mailer) { double(:mailer, :message => message) }
       let(:exception) { Exception.new("An error") }
 
       before(:each) do
