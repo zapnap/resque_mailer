@@ -5,7 +5,7 @@ A gem plugin which allows messages prepared by ActionMailer to be delivered
 asynchronously. Assumes you're using Resque (http://github.com/defunkt/resque)
 for your background jobs.
 
-Note that recent (2.0+) versions of Resque::Mailer only work with Rails 3.x.
+Note that recent (2.0+) versions of Resque::Mailer only work with Rails 3.x or 4.x.
 For a version compatible with Rails 2, specify v1.x in your Gemfile.
 
 ## Installation
