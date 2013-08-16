@@ -1,3 +1,7 @@
+### EDGE / 2013-08-15
+* Travis Integration (Peter Goldstein)
+* ActionMailer 4.0 test compatibility (Peter Goldstein)
+
 ### 2.2.4 / 2013-05-25
 * Compatibility for Rails 4 pre-release (Ben Woosley)
 * Fallback to synchronous is default when connection to Redis fails
