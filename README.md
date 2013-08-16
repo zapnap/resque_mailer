@@ -1,4 +1,5 @@
 # ResqueMailer
+[![Build Status](https://secure.travis-ci.org/zapnap/resque_mailer.png)](http://travis-ci.org/zapnap/resque_mailer)
 
 A gem plugin which allows messages prepared by ActionMailer to be delivered
 asynchronously. Assumes you're using Resque (http://github.com/defunkt/resque)
