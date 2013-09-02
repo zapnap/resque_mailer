@@ -1,4 +1,5 @@
 # ResqueMailer
+[![Gem Version](https://badge.fury.io/rb/resque_mailer.png)](http://badge.fury.io/rb/resque_mailer)
 [![Build Status](https://secure.travis-ci.org/zapnap/resque_mailer.png)](http://travis-ci.org/zapnap/resque_mailer)
 
 A gem plugin which allows messages prepared by ActionMailer to be delivered
