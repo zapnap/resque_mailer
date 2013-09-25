@@ -153,6 +153,10 @@ module Resque
         end
       end
 
+      def unschedule_delivery
+        ::Resque.remove_delayed(@mailer_class, @method_name, *@args)
+      end
+
       def deliver!
         actual_message.deliver
       end
