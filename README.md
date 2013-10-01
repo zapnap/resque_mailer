@@ -97,6 +97,9 @@ These will enqueue mail for delivery at a specified time in the future.
     # Delivers in 7 days
     MyMailer.reminder_email(params).deliver_in(7.days)
 
+    # Unschedule delivery
+    MyMailer.reminder_email(params).unschedule_delivery
+
 ## Testing
 
 You don't want to be sending actual emails in the test environment, so you can
