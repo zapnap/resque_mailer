@@ -154,7 +154,13 @@ module Resque
       end
 
       def unschedule_delivery
-        ::Resque.remove_delayed(@mailer_class, @method_name, *@args)
+
+        unless resque.respond_to? :remove_delayed
+          raise "You need to install resque-scheduler to use unschedule_delivery"
+        end
+
+        resque.remove_delayed(@mailer_class, @method_name, *@args)
+
       end
 
       def deliver!

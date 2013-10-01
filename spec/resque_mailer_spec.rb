@@ -7,6 +7,7 @@ end
 class FakeResqueWithScheduler < FakeResque
   def self.enqueue_in(time, *args); end
   def self.enqueue_at(time, *args); end
+  def self.remove_delayed(klass, *args); end
 end
 
 class Rails3Mailer < ActionMailer::Base
@@ -98,6 +99,30 @@ describe Resque::Mailer do
         lambda { @delivery.call }.should change(ActionMailer::Base.deliveries, :size).by(1)
       end
     end
+  end
+
+  describe '#unschedule_delivery' do
+    before(:all) do
+      @unschedule = lambda {
+        Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).unschedule_delivery
+      }
+    end
+
+    context "without reque-schedule intalled" do
+      it 'raises an error' do
+        lambda { @unschedule.call }.should raise_exception
+      end
+    end
+
+    context "with resqueue-scheduler" do
+      let(:resque) { FakeResqueWithScheduler }
+
+      it 'should unschedule email' do
+        resque.should_receive(:remove_delayed).with(Rails3Mailer, :test_mail, Rails3Mailer::MAIL_PARAMS)
+        @unschedule.call
+      end
+    end
+
   end
 
   describe '#deliver_at' do
