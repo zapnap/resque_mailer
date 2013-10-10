@@ -1,7 +1,8 @@
 ### EDGE / 2013-08-15
 * Travis Integration (Peter Goldstein)
 * ActionMailer 4.0 test compatibility (Peter Goldstein)
-* ...
+* Added `unschedule_delivery` method for resque-scheduler integration 
+  (gsdean)
 
 ### 2.2.4 / 2013-05-25
 * Compatibility for Rails 4 pre-release (Ben Woosley)
