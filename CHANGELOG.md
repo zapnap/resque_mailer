@@ -1,4 +1,4 @@
-### EDGE / 2013-08-15
+### 2.2.5 / 2013-10-10
 * Travis Integration (Peter Goldstein)
 * ActionMailer 4.0 test compatibility (Peter Goldstein)
 * Added `unschedule_delivery` method for resque-scheduler integration 
