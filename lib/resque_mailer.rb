@@ -122,7 +122,7 @@ module Resque
         if @mailer_class.deliver?
           begin
             resque.enqueue(@mailer_class, @method_name, *@args)
-          rescue Errno::ECONNREFUSED
+          rescue Errno::ECONNREFUSED, Redis::CannotConnectError
             logger.error "Unable to connect to Redis; falling back to synchronous mail delivery" if logger
             deliver!
           end
