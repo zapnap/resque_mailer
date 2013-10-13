@@ -89,14 +89,31 @@ describe Resque::Mailer do
     end
 
     context "when redis is not available" do
-      before do
-        Resque::Mailer.default_queue_target.stub(:enqueue).and_raise(Errno::ECONNREFUSED)
+      context 'using v2' do
+        before do
+          Resque::Mailer.default_queue_target.stub(:enqueue).and_raise(Errno::ECONNREFUSED)
+        end
+
+        it 'falls back to synchronous delivery automatically' do
+          Resque::Mailer.fallback_to_synchronous = true
+          logger.should_receive(:error).at_least(:once)
+          lambda { @delivery.call }.should change(ActionMailer::Base.deliveries, :size).by(1)
+        end
       end
 
-      it 'falls back to synchronous delivery automatically' do
-        Resque::Mailer.fallback_to_synchronous = true
-        logger.should_receive(:error).at_least(:once)
-        lambda { @delivery.call }.should change(ActionMailer::Base.deliveries, :size).by(1)
+      context 'using v3' do
+        module Redis
+          class CannotConnectError < RuntimeError; end
+        end
+
+        before do
+          Resque::Mailer.default_queue_target.stub(:enqueue).and_raise(Redis::CannotConnectError)
+        end
+
+        it 'falls back to synchronous delivery automatically' do
+          logger.should_receive(:error).at_least(:once)
+          lambda { @delivery.call }.should change(ActionMailer::Base.deliveries, :size).by(1)
+        end
       end
     end
   end
