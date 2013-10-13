@@ -1,3 +1,6 @@
+### EDGE / 2013-10-13
+* Redis client v3 support; fix unhandled exception when offline (Yoav Matchulsky)
+
 ### 2.2.5 / 2013-10-10
 * Travis Integration (Peter Goldstein)
 * ActionMailer 4.0 test compatibility (Peter Goldstein)
