@@ -61,8 +61,21 @@ name when starting your workers.
 Custom handling of errors that arise when sending a message is possible by
 assigning a lambda to the `error_hander` attribute.
 
+There are two supported lambdas for backwards compatiability:
+
+The first lamba will be deprecated in a future release:
+
 ```ruby
-Resque::Mailer.error_handler = lambda { |mailer, action, args, exception|
+Resque::Mailer.error_handler = lambda { |mailer, message, error|
+  # some custom error handling code here in which you optionally re-raise the error
+}
+```
+
+The new lamba contains two other arguments, action and args, which allows
+mailers to be requeued on failure:
+
+```ruby
+Resque::Mailer.error_handler = lambda { |mailer, message, error, action, args|
   # Necessary to re-enqueue jobs that receieve the SIGTERM signal
   if exception.is_a?(Resque::TermException)
     Resque.enqueue(mailer, action, *args)

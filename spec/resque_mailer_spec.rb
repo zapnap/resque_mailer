@@ -247,33 +247,67 @@ describe Resque::Mailer do
       end
 
       context "when error_handler set" do
-        before(:each) do
-          Resque::Mailer.error_handler = lambda { |mailer, action, args, exception|
-            @mailer = mailer
-            @action = action
-            @args = args
-            @exception = exception
-          }
+        context "without action and args" do
+          before(:each) do
+            Resque::Mailer.error_handler = lambda { |mailer, message, exception|
+              @mailer = mailer
+              @message = message
+              @exception = exception
+            }
+          end
+
+          it "should pass the mailer to the handler" do
+            subject
+            @mailer.should eq(Rails3Mailer)
+          end
+
+          it "should pass the message to the handler" do
+            subject
+            @message.should eq(message)
+          end
+
+          it "should pass the exception to the handler" do
+            subject
+            @exception.should eq(exception)
+          end
         end
 
-        it "should pass the mailer to the handler" do
-          subject
-          @mailer.should eq(Rails3Mailer)
-        end
+        context "with action and args" do
+          before(:each) do
+            Resque::Mailer.error_handler = lambda { |mailer, message, exception, action, args|
+              @mailer = mailer
+              @message = message
+              @exception = exception
+              @action = action
+              @args = args
+            }
+          end
 
-        it "should pass the action to the handler" do
-          subject
-          @action.should eq(:test_mail)
-        end
+          it "should pass the mailer to the handler" do
+            subject
+            @mailer.should eq(Rails3Mailer)
+          end
 
-        it "should pass the args to the handler" do
-          subject
-          @args.should eq([Rails3Mailer::MAIL_PARAMS])
-        end
+          it "should pass the message to the handler" do
+            subject
+            @message.should eq(message)
+          end
 
-        it "should pass the exception to the handler" do
-          subject
-          @exception.should eq(exception)
+
+          it "should pass the action to the handler" do
+            subject
+            @action.should eq(:test_mail)
+          end
+
+          it "should pass the args to the handler" do
+            subject
+            @args.should eq([Rails3Mailer::MAIL_PARAMS])
+          end
+
+          it "should pass the exception to the handler" do
+            subject
+            @exception.should eq(exception)
+          end
         end
       end
     end
