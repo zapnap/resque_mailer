@@ -58,12 +58,17 @@ name when starting your workers.
 
     QUEUE=application_specific_mailer rake environment resque:work
 
-Custom handling of errors that arise when sending a message is possible by 
+Custom handling of errors that arise when sending a message is possible by
 assigning a lambda to the `error_hander` attribute.
 
 ```ruby
-Resque::Mailer.error_handler = lambda { |mailer, message, error|
-  # some custom error handling code here in which you optionally re-raise the error
+Resque::Mailer.error_handler = lambda { |mailer, action, args, exception|
+  # Necessary to re-enqueue jobs that receieve the SIGTERM signal
+  if exception.is_a?(Resque::TermException)
+    Resque.enqueue(mailer, action, *args)
+  else
+    raise exception
+  end
 }
 ```
 

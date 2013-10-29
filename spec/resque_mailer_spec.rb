@@ -248,9 +248,10 @@ describe Resque::Mailer do
 
       context "when error_handler set" do
         before(:each) do
-          Resque::Mailer.error_handler = lambda { |mailer, message, exception|
+          Resque::Mailer.error_handler = lambda { |mailer, action, args, exception|
             @mailer = mailer
-            @message = message
+            @action = action
+            @args = args
             @exception = exception
           }
         end
@@ -260,9 +261,14 @@ describe Resque::Mailer do
           @mailer.should eq(Rails3Mailer)
         end
 
-        it "should pass the message to the handler" do
+        it "should pass the action to the handler" do
           subject
-          @message.should eq(message)
+          @action.should eq(:test_mail)
+        end
+
+        it "should pass the args to the handler" do
+          subject
+          @args.should eq([Rails3Mailer::MAIL_PARAMS])
         end
 
         it "should pass the exception to the handler" do
