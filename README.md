@@ -3,7 +3,7 @@
 [![Build Status](https://secure.travis-ci.org/zapnap/resque_mailer.png)](http://travis-ci.org/zapnap/resque_mailer)
 
 A gem plugin which allows messages prepared by ActionMailer to be delivered
-asynchronously. Assumes you're using Resque (http://github.com/defunkt/resque)
+asynchronously. Assumes you're using Resque (https://github.com/resque/resque)
 for your background jobs.
 
 Note that recent (2.0+) versions of Resque::Mailer only work with Rails 3.x or 4.x.
