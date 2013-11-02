@@ -18,7 +18,7 @@
 
 ### 2.2.2 / 2013-01-27
 * Fall back to deliver (not deliver!) on actual message, expected
-  behavios when perform_deliveries is false, etc.
+  behavior when perform_deliveries is false, etc.
 
 ### 2.2.1 / 2012-12-09
 * Added optional support for synchronous fallback (Lee Edwards and
