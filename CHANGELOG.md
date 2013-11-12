@@ -1,4 +1,4 @@
-### EDGE / 2013-10-13
+### EDGE / 2013-11-12
 * Add action and args as arguments for the lambda / for requeuing 
   (Ellis Berner, Austen Ito)
 * Redis client v3 support; fix unhandled exception when offline
