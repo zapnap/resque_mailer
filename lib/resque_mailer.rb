@@ -50,6 +50,7 @@ module Resque
         rescue Exception => ex
           if Mailer.error_handler
             if Mailer.error_handler.arity == 3
+              warn "WARNING: error handlers with 3 arguments are deprecated and will be removed in the next release"
               Mailer.error_handler.call(self, message, ex)
             else
               Mailer.error_handler.call(self, message, ex, action, args)
