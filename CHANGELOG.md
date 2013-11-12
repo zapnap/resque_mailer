@@ -1,5 +1,8 @@
 ### EDGE / 2013-10-13
-* Redis client v3 support; fix unhandled exception when offline (Yoav Matchulsky)
+* Add action and args as arguments for the lambda / for requeuing 
+  (Ellis Berner, Austen Ito)
+* Redis client v3 support; fix unhandled exception when offline
+  (Yoav Matchulsky)
 
 ### 2.2.5 / 2013-10-10
 * Travis Integration (Peter Goldstein)
