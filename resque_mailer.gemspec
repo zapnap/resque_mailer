@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.homepage    = "http://github.com/zapnap/resque_mailer"
   s.summary     = "Rails plugin for sending asynchronous email with ActionMailer and Resque."
   s.description = "Rails plugin for sending asynchronous email with ActionMailer and Resque."
+  s.license     = "MIT"
 
   s.add_dependency("actionmailer", ">= 3.0")
   s.add_development_dependency("rspec", "~> 2.6")
