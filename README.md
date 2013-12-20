@@ -98,7 +98,7 @@ other mailers inherit from an AsyncMailer:
 
     # app/mailers/example_mailer.rb
     class ExampleMailer < AsyncMailer
-      def say_hello(user)
+      def say_hello(user_id)
         # ...
       end
     end
