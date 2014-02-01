@@ -30,7 +30,7 @@ Include Resque::Mailer in your ActionMailer subclass(es) like this:
 
 Now, when `MyMailer.subject_email(params).deliver` is called, an entry
 will be created in the job queue. Your Resque workers will be able to deliver
-this message for you. The queue we're using is imaginatively named +mailer+,
+this message for you. The queue we're using is imaginatively named `mailer`,
 so just make sure your workers know about it and are loading your environment:
 
     QUEUE=mailer rake environment resque:work
