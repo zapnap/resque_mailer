@@ -59,9 +59,8 @@ name when starting your workers.
     QUEUE=application_specific_mailer rake environment resque:work
 
 Custom handling of errors that arise when sending a message is possible by
-assigning a lambda to the `error_hander` attribute.
-
-There are two supported lambdas for backwards compatiability:
+assigning a lambda to the `error_hander` attribute. There are two supported 
+lambdas for backwards compatiability.
 
 The first lamba will be deprecated in a future release:
 
