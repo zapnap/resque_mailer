@@ -174,6 +174,10 @@ module Resque
         actual_message.send(method_name, *args)
       end
 
+      def respond_to?(method_name, *args)
+        super || actual_message.respond_to?(method_name, *args)
+      end
+
       def logger
         @mailer_class.logger
       end
