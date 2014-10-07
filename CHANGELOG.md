@@ -1,3 +1,7 @@
+### EDGE / 2014-10-07
+* Pass respond_to? inquiries through to decoy (to allow preview, etc) 
+  (Ian Lesperance)
+
 ### 2.2.6 / 2013-11-13
 * Add action and args as arguments to the error handler lambda for 
   requeuing (Ellis Berner, Austen Ito)
