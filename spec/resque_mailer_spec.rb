@@ -335,4 +335,18 @@ describe Resque::Mailer do
       end
     end
   end
+
+  describe '#respond_to?' do
+    it 'should admit to responding to its own methods' do
+      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).respond_to?(:deliver_at).should be_truthy
+    end
+
+    it 'should admit to responding to original mail methods' do
+      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).respond_to?(:subject).should be_truthy
+    end
+
+    it 'should not admit to responding to non-existent methods' do
+      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).respond_to?(:definitely_not_a_method).should be_falsy
+    end
+  end
 end
