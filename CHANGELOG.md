@@ -1,4 +1,4 @@
-### EDGE / 2014-10-07
+### 2.2.7 / 2014-10-08
 * Pass respond_to? inquiries through to decoy (to allow preview, etc) 
   (Ian Lesperance)
 
