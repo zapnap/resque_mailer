@@ -1,3 +1,6 @@
+### EDGE / 2015-02-06
+* Convert specs to use modern RSpec expectation syntax
+
 ### 2.2.7 / 2014-10-08
 * Pass respond_to? inquiries through to decoy (to allow preview, etc) 
   (Ian Lesperance)

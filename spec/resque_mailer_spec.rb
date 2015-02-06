@@ -39,22 +39,22 @@ describe Resque::Mailer do
   describe "resque" do
     it "allows overriding of the default queue target (for testing)" do
       Resque::Mailer.default_queue_target = FakeResque
-      Rails3Mailer.resque.should == FakeResque
+      expect(Rails3Mailer.resque).to eq FakeResque
     end
   end
 
   describe "queue" do
     it "defaults to the 'mailer' queue" do
-      Rails3Mailer.queue.should == "mailer"
+      expect(Rails3Mailer.queue).to eq "mailer"
     end
 
     it "allows overriding of the default queue name" do
       Resque::Mailer.default_queue_name = "postal"
-      Rails3Mailer.queue.should == "postal"
+      expect(Rails3Mailer.queue).to eq "postal"
     end
 
     it "allows overriding of the local queue name" do
-      PriorityMailer.queue.should == "priority_mailer"
+      expect(PriorityMailer.queue).to eq "priority_mailer"
     end
   end
 
@@ -66,38 +66,38 @@ describe Resque::Mailer do
     end
 
     it 'should not deliver the email synchronously' do
-      lambda { @delivery.call }.should_not change(ActionMailer::Base.deliveries, :size)
+      expect { @delivery.call }.to_not change(ActionMailer::Base.deliveries, :size)
     end
 
     it 'should place the deliver action on the Resque "mailer" queue' do
-      resque.should_receive(:enqueue).with(Rails3Mailer, :test_mail, Rails3Mailer::MAIL_PARAMS)
+      expect(resque).to receive(:enqueue).with(Rails3Mailer, :test_mail, Rails3Mailer::MAIL_PARAMS)
       @delivery.call
     end
 
-    context "when current env is excluded" do
+    context 'when current env is excluded' do
       it 'should not deliver through Resque for excluded environments' do
-        Resque::Mailer.stub(:excluded_environments => [:custom])
-        Resque::Mailer::MessageDecoy.any_instance.should_receive(:current_env).twice.and_return(:custom)
-        resque.should_not_receive(:enqueue)
+        Resque::Mailer.excluded_environments = [:custom]
+        expect_any_instance_of(Resque::Mailer::MessageDecoy).to receive(:current_env).twice.and_return(:custom)
+        expect(resque).to_not receive(:enqueue)
         @delivery.call
       end
     end
 
     it 'should not invoke the method body more than once' do
-      Resque::Mailer.should_not_receive(:success!)
+      expect(Resque::Mailer).to_not receive(:success!)
       Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver
     end
 
     context "when redis is not available" do
       context 'using v2' do
         before do
-          Resque::Mailer.default_queue_target.stub(:enqueue).and_raise(Errno::ECONNREFUSED)
+          allow(Resque::Mailer.default_queue_target).to receive(:enqueue).and_raise(Errno::ECONNREFUSED)
         end
 
         it 'falls back to synchronous delivery automatically' do
           Resque::Mailer.fallback_to_synchronous = true
-          logger.should_receive(:error).at_least(:once)
-          lambda { @delivery.call }.should change(ActionMailer::Base.deliveries, :size).by(1)
+          expect(logger).to receive(:error).at_least(:once)
+          expect { @delivery.call }.to change(ActionMailer::Base.deliveries, :size).by(1)
         end
       end
 
@@ -107,12 +107,12 @@ describe Resque::Mailer do
         end
 
         before do
-          Resque::Mailer.default_queue_target.stub(:enqueue).and_raise(Redis::CannotConnectError)
+          allow(Resque::Mailer.default_queue_target).to receive(:enqueue).and_raise(Redis::CannotConnectError)
         end
 
         it 'falls back to synchronous delivery automatically' do
-          logger.should_receive(:error).at_least(:once)
-          lambda { @delivery.call }.should change(ActionMailer::Base.deliveries, :size).by(1)
+          expect(logger).to receive(:error).at_least(:once)
+          expect { @delivery.call }.to change(ActionMailer::Base.deliveries, :size).by(1)
         end
       end
     end
@@ -127,7 +127,7 @@ describe Resque::Mailer do
 
     context "without reque-schedule intalled" do
       it 'raises an error' do
-        lambda { @unschedule.call }.should raise_exception
+        expect { @unschedule.call }.to raise_exception
       end
     end
 
@@ -135,7 +135,7 @@ describe Resque::Mailer do
       let(:resque) { FakeResqueWithScheduler }
 
       it 'should unschedule email' do
-        resque.should_receive(:remove_delayed).with(Rails3Mailer, :test_mail, Rails3Mailer::MAIL_PARAMS)
+        expect(resque).to receive(:remove_delayed).with(Rails3Mailer, :test_mail, Rails3Mailer::MAIL_PARAMS)
         @unschedule.call
       end
     end
@@ -152,7 +152,7 @@ describe Resque::Mailer do
 
     context "without resque-scheduler installed" do
       it "raises an error" do
-        lambda { @delivery.call }.should raise_exception
+        expect { @delivery.call }.to raise_exception
       end
     end
 
@@ -258,17 +258,17 @@ describe Resque::Mailer do
 
           it "should pass the mailer to the handler" do
             subject
-            @mailer.should eq(Rails3Mailer)
+            expect(@mailer).to eq(Rails3Mailer)
           end
 
           it "should pass the message to the handler" do
             subject
-            @message.should eq(message)
+            expect(@message).to eq(message)
           end
 
           it "should pass the exception to the handler" do
             subject
-            @exception.should eq(exception)
+            expect(@exception).to eq(exception)
           end
         end
 
@@ -285,28 +285,28 @@ describe Resque::Mailer do
 
           it "should pass the mailer to the handler" do
             subject
-            @mailer.should eq(Rails3Mailer)
+            expect(@mailer).to eq(Rails3Mailer)
           end
 
           it "should pass the message to the handler" do
             subject
-            @message.should eq(message)
+            expect(@message).to eq(message)
           end
 
 
           it "should pass the action to the handler" do
             subject
-            @action.should eq(:test_mail)
+            expect(@action).to eq(:test_mail)
           end
 
           it "should pass the args to the handler" do
             subject
-            @args.should eq([Rails3Mailer::MAIL_PARAMS])
+            expect(@args).to eq([Rails3Mailer::MAIL_PARAMS])
           end
 
           it "should pass the exception to the handler" do
             subject
-            @exception.should eq(exception)
+            expect(@exception).to eq(exception)
           end
         end
       end
@@ -315,38 +315,39 @@ describe Resque::Mailer do
 
   describe 'original mail methods' do
     it 'should be preserved' do
-      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).subject.should == 'Subject'
-      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).from.should include('from@example.org')
-      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).to.should include('crafty@example.org')
+      expect(Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).subject).to eq 'Subject'
+      expect(Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).from).to include('from@example.org')
+      expect(Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).to).to include('crafty@example.org')
     end
 
     it 'should require execution of the method body prior to queueing' do
-      Resque::Mailer.should_receive(:success!).once
+      expect(Resque::Mailer).to receive(:success!).once
       Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).subject
     end
+
     context "when current env is excluded" do
       it 'should render email immediately' do
-        Resque::Mailer::MessageDecoy.any_instance.stub(:environment_excluded?).and_return(true)
-        resque.should_not_receive(:enqueue_in)
+        allow_any_instance_of(Resque::Mailer::MessageDecoy).to receive(:environment_excluded?).and_return(true)
+        expect(resque).to_not receive(:enqueue_in)
         params = {:subject => 'abc'}
         mail = Rails3Mailer.test_mail(params)
         params[:subject] = 'xyz'
-        mail.to_s.should match('Subject: abc')
+        expect(mail.to_s).to match('Subject: abc')
       end
     end
   end
 
   describe '#respond_to?' do
     it 'should admit to responding to its own methods' do
-      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).respond_to?(:deliver_at).should be_truthy
+      expect(Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).respond_to?(:deliver_at)).to eq true
     end
 
     it 'should admit to responding to original mail methods' do
-      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).respond_to?(:subject).should be_truthy
+      expect(Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).respond_to?(:subject)).to eq true
     end
 
     it 'should not admit to responding to non-existent methods' do
-      Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).respond_to?(:definitely_not_a_method).should be_falsy
+      expect(Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).respond_to?(:definitely_not_a_method)).to eq false
     end
   end
 end
