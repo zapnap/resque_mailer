@@ -24,9 +24,11 @@ If you're using Bundler to manage your dependencies, you should add it to your G
 
 Include Resque::Mailer in your ActionMailer subclass(es) like this:
 
-    class MyMailer < ActionMailer::Base
-      include Resque::Mailer
-    end
+```ruby
+class MyMailer < ActionMailer::Base
+  include Resque::Mailer
+end
+```
 
 Now, when `MyMailer.subject_email(params).deliver` is called, an entry
 will be created in the job queue. Your Resque workers will be able to deliver
@@ -38,7 +40,9 @@ so just make sure your workers know about it and are loading your environment:
 Note that you can still have mail delivered synchronously by using the bang
 method variant:
 
-    MyMailer.subject_email(params).deliver!
+```ruby
+MyMailer.subject_email(params).deliver!
+```
 
 Oh, by the way. Don't forget that **your async mailer jobs will be processed by
 a separate worker**. This means that you should resist the temptation to pass
@@ -49,8 +53,10 @@ the id and use it as needed.
 If you want to set a different default queue name for your mailer, you can
 change the `default_queue_name` property like so:
 
-    # config/initializers/resque_mailer.rb
-    Resque::Mailer.default_queue_name = 'application_specific_mailer'
+```ruby
+# config/initializers/resque_mailer.rb
+Resque::Mailer.default_queue_name = 'application_specific_mailer'
+```
 
 This is useful when you are running more than one application using
 resque_mailer in a shared environment. You will need to use the new queue
@@ -89,18 +95,19 @@ Resque::Mailer.error_handler = lambda { |mailer, message, error, action, args|
 If you have a variety of mailers in your application and want all of them to use
 Resque::Mailer by default, you can subclass ActionMailer::Base and have your
 other mailers inherit from an AsyncMailer:
+```ruby
+# config/initializers/resque_mailer.rb
+class AsyncMailer < ActionMailer::Base
+  include Resque::Mailer
+end
 
-    # config/initializers/resque_mailer.rb
-    class AsyncMailer < ActionMailer::Base
-      include Resque::Mailer
-    end
-
-    # app/mailers/example_mailer.rb
-    class ExampleMailer < AsyncMailer
-      def say_hello(user_id)
-        # ...
-      end
-    end
+# app/mailers/example_mailer.rb
+class ExampleMailer < AsyncMailer
+  def say_hello(user_id)
+    # ...
+  end
+end
+```
 
 ### Using with Resque Scheduler
 
@@ -108,27 +115,29 @@ If [resque-scheduler](https://github.com/bvandenbos/resque-scheduler) is
 installed, two extra methods will be available: `deliver_at` and `deliver_in`.
 These will enqueue mail for delivery at a specified time in the future.
 
-    # Delivers on the 25th of December, 2014
-    MyMailer.reminder_email(params).deliver_at(Time.parse('2014-12-25'))
+```ruby
+# Delivers on the 25th of December, 2014
+MyMailer.reminder_email(params).deliver_at(Time.parse('2014-12-25'))
 
-    # Delivers in 7 days
-    MyMailer.reminder_email(params).deliver_in(7.days)
+# Delivers in 7 days
+MyMailer.reminder_email(params).deliver_in(7.days)
 
-    # Unschedule delivery
-    MyMailer.reminder_email(params).unschedule_delivery
-
+# Unschedule delivery
+MyMailer.reminder_email(params).unschedule_delivery
+```
 ## Testing
 
 You don't want to be sending actual emails in the test environment, so you can
 configure the environments that should be excluded like so:
-
-    # config/initializers/resque_mailer.rb
-    Resque::Mailer.excluded_environments = [:test, :cucumber]
+```ruby
+# config/initializers/resque_mailer.rb
+Resque::Mailer.excluded_environments = [:test, :cucumber]
+```
 
 Note: Define `current_env` if using Resque::Mailer in a non-Rails project:
-
-    Resque::Mailer.current_env = :production
-
+```ruby
+Resque::Mailer.current_env = :production
+```
 
 ## Note on Patches / Pull Requests
 
