@@ -312,7 +312,7 @@ describe Resque::Mailer do
 
           it "should pass the args to the handler" do
             subject
-            expect(@args).to eq([Rails3Mailer::MAIL_PARAMS])
+            expect(@args).to eq(Rails3Mailer::MAIL_PARAMS)
           end
 
           it "should pass the exception to the handler" do
