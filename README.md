@@ -114,7 +114,7 @@ end
 
 By default, the arguments you pass to your mailer are passed as-is to Resque. This
 means you cannot pass things like database-backed objects. If you'd like to write
-your own serializer to do enable such things, simply write a class that implements
+your own serializer to enable such things, simply write a class that implements
 the class methods `self.serialize(*args)` and `self.deserialize(data)` and set
 `Resque::Mailer.argument_serializer = YourSerializerClass` in your resque_mailer
 initializer.
