@@ -1,5 +1,6 @@
-### EDGE / 2015-02-06
+### EDGE / 2016-04-23
 * Convert specs to use modern RSpec expectation syntax
+* Added argument serializers (Andrew DiMichele, René Klačan, Adam Bird)
 
 ### 2.2.7 / 2014-10-08
 * Pass respond_to? inquiries through to decoy (to allow preview, etc) 
