@@ -50,7 +50,13 @@ module Resque
         begin
           args = ::Resque::Mailer.argument_serializer.deserialize(serialized_args)
           message = self.send(:new, action, *args).message
-          message.deliver
+          if message.respond_to?(:deliver_now)
+            logger.error "deliver now"
+            message.deliver_now
+          else
+            logger.error "deliver"
+            message.deliver
+          end
         rescue Exception => ex
           if Mailer.error_handler
             if Mailer.error_handler.arity == 3
@@ -172,7 +178,13 @@ module Resque
       end
 
       def deliver!
-        actual_message.deliver
+        if actual_message.respond_to?(:deliver_now)
+          logger.error "deliver now"
+          actual_message.deliver_now
+        else
+          logger.error "deliver"
+          actual_message.deliver
+        end
       end
 
       def method_missing(method_name, *args)
