@@ -101,12 +101,8 @@ describe Resque::Mailer do
 
     context "when redis is not available" do
       context 'using v2' do
-        before do
-          allow(Resque::Mailer.default_queue_target).to receive(:enqueue).and_raise(Errno::ECONNREFUSED)
-        end
-
         it 'falls back to synchronous delivery automatically' do
-          Resque::Mailer.fallback_to_synchronous = true
+          allow(Resque::Mailer.default_queue_target).to receive(:enqueue).and_raise(Errno::ECONNREFUSED)
           expect(logger).to receive(:error).at_least(:once)
           expect { @delivery.call }.to change(ActionMailer::Base.deliveries, :size).by(1)
         end
@@ -117,11 +113,8 @@ describe Resque::Mailer do
           class CannotConnectError < RuntimeError; end
         end
 
-        before do
-          allow(Resque::Mailer.default_queue_target).to receive(:enqueue).and_raise(Redis::CannotConnectError)
-        end
-
         it 'falls back to synchronous delivery automatically' do
+          allow(Resque::Mailer.default_queue_target).to receive(:enqueue).and_raise(Redis::CannotConnectError)
           expect(logger).to receive(:error).at_least(:once)
           expect { @delivery.call }.to change(ActionMailer::Base.deliveries, :size).by(1)
         end
@@ -258,67 +251,39 @@ describe Resque::Mailer do
       end
 
       context "when error_handler set" do
-        context "without action and args" do
-          before(:each) do
-            Resque::Mailer.error_handler = lambda { |mailer, message, exception|
-              @mailer = mailer
-              @message = message
-              @exception = exception
-            }
-          end
-
-          it "should pass the mailer to the handler" do
-            subject
-            expect(@mailer).to eq(Rails3Mailer)
-          end
-
-          it "should pass the message to the handler" do
-            subject
-            expect(@message).to eq(message)
-          end
-
-          it "should pass the exception to the handler" do
-            subject
-            expect(@exception).to eq(exception)
-          end
+        before(:each) do
+          Resque::Mailer.error_handler = lambda { |mailer, message, exception, action, args|
+            @mailer = mailer
+            @message = message
+            @exception = exception
+            @action = action
+            @args = args
+          }
         end
 
-        context "with action and args" do
-          before(:each) do
-            Resque::Mailer.error_handler = lambda { |mailer, message, exception, action, args|
-              @mailer = mailer
-              @message = message
-              @exception = exception
-              @action = action
-              @args = args
-            }
-          end
+        it "should pass the mailer to the handler" do
+          subject
+          expect(@mailer).to eq(Rails3Mailer)
+        end
 
-          it "should pass the mailer to the handler" do
-            subject
-            expect(@mailer).to eq(Rails3Mailer)
-          end
+        it "should pass the message to the handler" do
+          subject
+          expect(@message).to eq(message)
+        end
 
-          it "should pass the message to the handler" do
-            subject
-            expect(@message).to eq(message)
-          end
+        it "should pass the action to the handler" do
+          subject
+          expect(@action).to eq(:test_mail)
+        end
 
+        it "should pass the args to the handler" do
+          subject
+          expect(@args).to eq(Rails3Mailer::MAIL_PARAMS)
+        end
 
-          it "should pass the action to the handler" do
-            subject
-            expect(@action).to eq(:test_mail)
-          end
-
-          it "should pass the args to the handler" do
-            subject
-            expect(@args).to eq(Rails3Mailer::MAIL_PARAMS)
-          end
-
-          it "should pass the exception to the handler" do
-            subject
-            expect(@exception).to eq(exception)
-          end
+        it "should pass the exception to the handler" do
+          subject
+          expect(@exception).to eq(exception)
         end
       end
     end

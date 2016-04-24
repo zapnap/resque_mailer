@@ -1,6 +1,7 @@
 ### EDGE / 2016-04-23
 * Convert specs to use modern RSpec expectation syntax
 * Added argument serializers (Andrew DiMichele, René Klačan, Adam Bird)
+* Remove deprecated fallback / error options in prep for 2.3.x
 
 ### 2.2.7 / 2014-10-08
 * Pass respond_to? inquiries through to decoy (to allow preview, etc) 

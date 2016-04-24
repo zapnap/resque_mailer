@@ -5,7 +5,7 @@ module Resque
   module Mailer
     class << self
       attr_accessor :default_queue_name, :default_queue_target, :current_env, :logger, :error_handler
-      attr_accessor :fallback_to_synchronous, :argument_serializer
+      attr_accessor :argument_serializer
       attr_reader :excluded_environments
 
       def excluded_environments=(envs)
@@ -14,11 +14,6 @@ module Resque
 
       def included(base)
         base.extend(ClassMethods)
-      end
-
-      # Deprecated
-      def fallback_to_synchronous=(val)
-        warn "WARNING: fallback_to_synchronous option is deprecated and will be removed in the next release"
       end
     end
 
@@ -59,12 +54,7 @@ module Resque
           end
         rescue Exception => ex
           if Mailer.error_handler
-            if Mailer.error_handler.arity == 3
-              warn "WARNING: error handlers with 3 arguments are deprecated and will be removed in the next release"
-              Mailer.error_handler.call(self, message, ex)
-            else
-              Mailer.error_handler.call(self, message, ex, action, args)
-            end
+            Mailer.error_handler.call(self, message, ex, action, args)
           else
             if logger
               logger.error "Unable to deliver email [#{action}]: #{ex}"
