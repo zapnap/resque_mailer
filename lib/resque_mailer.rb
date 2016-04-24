@@ -46,10 +46,8 @@ module Resque
           args = ::Resque::Mailer.argument_serializer.deserialize(serialized_args)
           message = self.send(:new, action, *args).message
           if message.respond_to?(:deliver_now)
-            logger.error "deliver now"
             message.deliver_now
           else
-            logger.error "deliver"
             message.deliver
           end
         rescue Exception => ex
@@ -169,10 +167,8 @@ module Resque
 
       def deliver!
         if actual_message.respond_to?(:deliver_now)
-          logger.error "deliver now"
           actual_message.deliver_now
         else
-          logger.error "deliver"
           actual_message.deliver
         end
       end
