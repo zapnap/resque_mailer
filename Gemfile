@@ -13,6 +13,10 @@ else
   "~> #{rails_version}"
 end
 
+if RUBY_VERSION < "2.0"
+  gem 'mime-types', '<= 2.99.1'
+end
+
 gem 'actionmailer', rails
 
 # Add dependencies to develop your gem here.

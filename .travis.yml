@@ -12,4 +12,3 @@ rvm:
 before_install:
   - gem update --system
   - gem update bundler
-  - gem install mime-types -v 2.6.2
