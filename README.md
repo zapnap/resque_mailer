@@ -119,6 +119,10 @@ the class methods `self.serialize(*args)` and `self.deserialize(data)` and set
 `Resque::Mailer.argument_serializer = YourSerializerClass` in your resque_mailer
 initializer.
 
+There's also Active Record serializer which allows you to pass AR
+models directly as arguments. To use it just do:
+`Resque::Mailer.argument_serializer = Resque::Mailer::Serializers::ActiveRecordSerializer`
+
 ### Using with Resque Scheduler
 
 If [resque-scheduler](https://github.com/bvandenbos/resque-scheduler) is

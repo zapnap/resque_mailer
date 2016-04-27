@@ -1,5 +1,6 @@
 require 'resque_mailer/version'
-require 'resque_mailer/pass_thru_serializer'
+require 'resque_mailer/serializers/pass_thru_serializer'
+require 'resque_mailer/serializers/active_record_serializer'
 
 module Resque
   module Mailer
@@ -21,7 +22,7 @@ module Resque
     self.default_queue_target = ::Resque
     self.default_queue_name = "mailer"
     self.excluded_environments = [:test]
-    self.argument_serializer = ::Resque::Mailer::PassThruSerializer
+    self.argument_serializer = ::Resque::Mailer::Serializers::PassThruSerializer
 
     module ClassMethods
 
