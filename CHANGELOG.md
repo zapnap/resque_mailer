@@ -1,6 +1,7 @@
 ### EDGE / 2016-04-23
 * Convert specs to use modern RSpec expectation syntax
 * Added argument serializers (Andrew DiMichele, René Klačan, Adam Bird)
+* ActiveRecord argument serializer (René Klačan)
 * Use `deliver_now` if available
 * Remove deprecated fallback / error options in prep for 2.3.x
 
