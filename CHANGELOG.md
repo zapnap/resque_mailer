@@ -1,4 +1,4 @@
-### EDGE / 2016-04-23
+### 2.3.0 / 2016-04-30
 * Convert specs to use modern RSpec expectation syntax
 * Added argument serializers (Andrew DiMichele, René Klačan, Adam Bird)
 * ActiveRecord argument serializer (René Klačan)
