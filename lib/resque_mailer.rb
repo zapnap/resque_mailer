@@ -118,7 +118,11 @@ module Resque
       end
 
       def actual_message
-        @actual_message ||= @mailer_class.send(:new, @method_name, *@args).message
+        @actual_message ||= begin
+          mailer_class_send = @mailer_class.send(:new)
+          mailer_class_send.process(@method_name, *@args)
+          mailer_class_send.message
+        end
       end
 
       def deliver
