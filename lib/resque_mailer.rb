@@ -45,7 +45,12 @@ module Resque
       def perform(action, serialized_args)
         begin
           args = ::Resque::Mailer.argument_serializer.deserialize(serialized_args)
-          message = self.send(:new, action, *args).message
+          message ||= begin
+            mailer_class_send = @mailer_class.send(:new)
+            mailer_class_send.process(action, *@args)
+            mailer_class_send.message
+          end
+
           if message.respond_to?(:deliver_now)
             message.deliver_now
           else
