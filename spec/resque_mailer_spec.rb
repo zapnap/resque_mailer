@@ -239,6 +239,8 @@ describe Resque::Mailer do
       let(:exception) { Exception.new("An error") }
 
       before(:each) do
+        mailer.stub(:process)
+        mailer.stub(:message) { message }
         Rails3Mailer.stub(:new) { mailer }
         message.stub(:deliver).and_raise(exception)
       end
