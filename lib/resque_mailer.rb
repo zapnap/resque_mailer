@@ -142,7 +142,7 @@ module Resque
         end
 
         if @mailer_class.deliver?
-          resque.enqueue_at(time, @mailer_class, @method_name, *@args)
+          resque.enqueue_at(time, @mailer_class, @method_name, @serialized_args)
         end
       end
 
@@ -154,7 +154,7 @@ module Resque
         end
 
         if @mailer_class.deliver?
-          resque.enqueue_in(time, @mailer_class, @method_name, *@args)
+          resque.enqueue_in(time, @mailer_class, @method_name, @serialized_args)
         end
       end
 
@@ -163,7 +163,7 @@ module Resque
           raise "You need to install resque-scheduler to use unschedule_delivery"
         end
 
-        resque.remove_delayed(@mailer_class, @method_name, *@args)
+        resque.remove_delayed(@mailer_class, @method_name, @serialized_args)
       end
 
       def deliver!

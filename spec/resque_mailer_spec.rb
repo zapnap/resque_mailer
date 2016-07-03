@@ -139,7 +139,7 @@ describe Resque::Mailer do
       let(:resque) { FakeResqueWithScheduler }
 
       it 'should unschedule email' do
-        expect(resque).to receive(:remove_delayed).with(Rails3Mailer, :test_mail, Rails3Mailer::MAIL_PARAMS)
+        expect(resque).to receive(:remove_delayed).with(Rails3Mailer, :test_mail, Resque::Mailer.argument_serializer.serialize(Rails3Mailer::MAIL_PARAMS))
         @unschedule.call
       end
     end
@@ -168,7 +168,7 @@ describe Resque::Mailer do
       end
 
       it 'should place the deliver action on the Resque "mailer" queue' do
-        resque.should_receive(:enqueue_at).with(@time, Rails3Mailer, :test_mail, Rails3Mailer::MAIL_PARAMS)
+        expect(resque).to receive(:enqueue_at).with(@time, Rails3Mailer, :test_mail, Resque::Mailer.argument_serializer.serialize(Rails3Mailer::MAIL_PARAMS))
         @delivery.call
       end
 
@@ -205,7 +205,7 @@ describe Resque::Mailer do
       end
 
       it 'should place the deliver action on the Resque "mailer" queue' do
-        resque.should_receive(:enqueue_in).with(@time, Rails3Mailer, :test_mail, Rails3Mailer::MAIL_PARAMS)
+        expect(resque).to receive(:enqueue_in).with(@time, Rails3Mailer, :test_mail, Resque::Mailer.argument_serializer.serialize(Rails3Mailer::MAIL_PARAMS))
         @delivery.call
       end
 
