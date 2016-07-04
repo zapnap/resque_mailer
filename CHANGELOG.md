@@ -1,5 +1,6 @@
-### EDGE / 2016-07-03
+### 2.3.1 / 2016-07-03
 * Serializer bugfix for scheduler integration
+* RSpec cleanup
 
 ### 2.3.0 / 2016-04-30
 * Convert specs to use modern RSpec expectation syntax
