@@ -13,6 +13,12 @@ module Resque
         @excluded_environments = [*envs].map { |e| e.to_sym }
       end
 
+      def prepare_message(klass, action, *args)
+        msg = klass.send(:new)
+        msg.process(action, *args)
+        msg.message
+      end
+
       def included(base)
         base.extend(ClassMethods)
       end
@@ -45,7 +51,7 @@ module Resque
       def perform(action, serialized_args)
         begin
           args = ::Resque::Mailer.argument_serializer.deserialize(serialized_args)
-          message = self.send(:new, action, *args).message
+          message = ::Resque::Mailer.prepare_message(self, action, *args)
           if message.respond_to?(:deliver_now)
             message.deliver_now
           else
@@ -118,7 +124,7 @@ module Resque
       end
 
       def actual_message
-        @actual_message ||= @mailer_class.send(:new, @method_name, *@args).message
+        @actual_message ||= ::Resque::Mailer.prepare_message(@mailer_class, @method_name, *@args)
       end
 
       def deliver

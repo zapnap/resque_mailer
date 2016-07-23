@@ -241,6 +241,8 @@ describe Resque::Mailer do
       before(:each) do
         Rails3Mailer.stub(:new) { mailer }
         message.stub(:deliver).and_raise(exception)
+        mailer.stub(:process)
+        mailer.stub(:message) { message }
       end
 
       subject { Rails3Mailer.perform(:test_mail, Rails3Mailer::MAIL_PARAMS) }
