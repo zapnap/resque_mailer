@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.license     = "MIT"
 
   s.add_dependency("actionmailer", ">= 3.0")
-  s.add_development_dependency("rspec", "~> 2.6")
+  s.add_development_dependency("rspec", "~> 3.5")
   s.add_development_dependency("yard", ">= 0.6.0")
 
   s.extra_rdoc_files = %w(LICENSE CHANGELOG.md README.md)

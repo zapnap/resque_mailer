@@ -3,7 +3,6 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
 require 'action_mailer'
 require 'resque_mailer'
-require 'rspec/autorun'
 require 'active_support/hash_with_indifferent_access'
 
 Resque::Mailer.excluded_environments = []
