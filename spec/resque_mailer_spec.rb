@@ -42,8 +42,8 @@ describe Resque::Mailer do
 
   before do
     Resque::Mailer.default_queue_target = resque
-    Resque::Mailer.stub(:success!)
-    Resque::Mailer.stub(:current_env => :test)
+    allow(Resque::Mailer).to receive(:success!)
+    allow(Resque::Mailer).to receive(:current_env).and_return(:test)
     Rails3Mailer.logger = logger
   end
 
@@ -129,9 +129,9 @@ describe Resque::Mailer do
       }
     end
 
-    context "without reque-schedule intalled" do
+    context "without reque-schedule installed" do
       it 'raises an error' do
-        expect { @unschedule.call }.to raise_exception
+        expect { @unschedule.call }.to raise_exception(RuntimeError)
       end
     end
 
@@ -156,7 +156,7 @@ describe Resque::Mailer do
 
     context "without resque-scheduler installed" do
       it "raises an error" do
-        expect { @delivery.call }.to raise_exception
+        expect { @delivery.call }.to raise_exception(RuntimeError)
       end
     end
 
@@ -174,7 +174,7 @@ describe Resque::Mailer do
 
       context "when current env is excluded" do
         it 'does not deliver through Resque for excluded environments' do
-          Resque::Mailer.stub(:excluded_environments => [:custom])
+          allow(Resque::Mailer).to receive(:excluded_environments).and_return([:custom])
           expect_any_instance_of(Resque::Mailer::MessageDecoy).to_not receive(:current_env).twice.and_return(:custom)
           expect(resque).to_not receive(:enqueue_at)
           @delivery.call
@@ -193,7 +193,7 @@ describe Resque::Mailer do
 
     context "without resque-scheduler installed" do
       it "raises an error" do
-        expect { @delivery.call }.to raise_exception
+        expect { @delivery.call }.to raise_exception(RuntimeError)
       end
     end
 
@@ -211,7 +211,7 @@ describe Resque::Mailer do
 
       context "when current env is excluded" do
         it 'does not deliver through Resque for excluded environments' do
-          Resque::Mailer.stub(:excluded_environments => [:custom])
+          allow(Resque::Mailer).to receive(:excluded_environments).and_return([:custom])
           expect_any_instance_of(Resque::Mailer::MessageDecoy).to receive(:current_env).twice.and_return(:custom)
           expect(resque).to_not receive(:enqueue_in)
           @delivery.call
@@ -239,8 +239,10 @@ describe Resque::Mailer do
       let(:exception) { Exception.new("An error") }
 
       before(:each) do
-        Rails3Mailer.stub(:new) { mailer }
-        message.stub(:deliver).and_raise(exception)
+        allow(Rails3Mailer).to receive(:new) { mailer }
+        allow(message).to receive(:deliver).and_raise(exception)
+        allow(mailer).to receive(:process)
+        allow(mailer).to receive(:message) { message }
       end
 
       subject { Rails3Mailer.perform(:test_mail, Rails3Mailer::MAIL_PARAMS) }
@@ -341,13 +343,13 @@ describe Resque::Mailer do
     end
 
     it "serializes the arguments with the custom serializer" do
-      TestSerializer.stub(:serialize)
+      allow(TestSerializer).to receive(:serialize)
       expect(TestSerializer).to receive(:serialize)
       Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver
     end
 
     it "deserializes the arguments with the custom serializer" do
-      TestSerializer.stub(:deserialize)
+      allow(TestSerializer).to receive(:deserialize)
       expect(TestSerializer).to receive(:deserialize)
       Rails3Mailer.perform(:test_mail, Resque::Mailer.argument_serializer.serialize(Rails3Mailer::MAIL_PARAMS))
     end
