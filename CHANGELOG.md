@@ -1,3 +1,6 @@
+### EDGE / 2016-10-18
+* Symbolize argument keys to fix mailer block syntax issues (J Garcia)
+
 ### 2.4.0 / 2016-10-05
 * Rails 5 compatibility
 
@@ -13,11 +16,11 @@
 * Remove deprecated fallback / error options in prep for 2.3.x
 
 ### 2.2.7 / 2014-10-08
-* Pass respond_to? inquiries through to decoy (to allow preview, etc) 
+* Pass respond_to? inquiries through to decoy (to allow preview, etc)
   (Ian Lesperance)
 
 ### 2.2.6 / 2013-11-13
-* Add action and args as arguments to the error handler lambda for 
+* Add action and args as arguments to the error handler lambda for
   requeuing (Ellis Berner, Austen Ito)
 * Redis client v3 support; fix unhandled exception when offline
   (Yoav Matchulsky)
@@ -25,13 +28,13 @@
 ### 2.2.5 / 2013-10-10
 * Travis Integration (Peter Goldstein)
 * ActionMailer 4.0 test compatibility (Peter Goldstein)
-* Added `unschedule_delivery` method for resque-scheduler integration 
+* Added `unschedule_delivery` method for resque-scheduler integration
   (gsdean)
 
 ### 2.2.4 / 2013-05-25
 * Compatibility for Rails 4 pre-release (Ben Woosley)
 * Fallback to synchronous is default when connection to Redis fails
-* Avoid lazy evaluation of mail when excluded, for use with mail_view 
+* Avoid lazy evaluation of mail when excluded, for use with mail_view
   (gingerlime)
 
 ### 2.2.3 / 2013-02-27
