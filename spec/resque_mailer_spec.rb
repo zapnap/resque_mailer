@@ -122,6 +122,20 @@ describe Resque::Mailer do
     end
   end
 
+  describe '#deliver_now' do
+    it 'has method_alias to #deliver' do
+      @message_decoy = Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS)
+      @message_decoy.method(:deliver_now) == @message_decoy.method(:deliver)
+    end
+  end
+
+  describe '#deliver_now!' do
+    it 'has method_alias to #deliver' do
+      @message_decoy = Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS)
+      @message_decoy.method(:deliver_now!) == @message_decoy.method(:deliver!)
+    end
+  end
+
   describe '#unschedule_delivery' do
     before(:all) do
       @unschedule = lambda {
