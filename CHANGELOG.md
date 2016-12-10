@@ -1,5 +1,6 @@
-### EDGE / 2016-10-18
+### EDGE / 2016-12-10
 * Symbolize argument keys to fix mailer block syntax issues (J Garcia)
+* Alias method for `deliver_now` (Kurt Funai)
 
 ### 2.4.0 / 2016-10-05
 * Rails 5 compatibility
