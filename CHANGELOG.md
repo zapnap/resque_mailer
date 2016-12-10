@@ -1,4 +1,4 @@
-### EDGE / 2016-12-10
+### 2.4.1 / 2016-12-10
 * Symbolize argument keys to fix mailer block syntax issues (J Garcia)
 * Alias method for `deliver_now` (Kurt Funai)
 
