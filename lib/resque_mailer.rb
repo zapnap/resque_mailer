@@ -145,6 +145,7 @@ module Resque
           end
         end
       end
+      alias_method :deliver_now, :deliver
 
       def deliver_at(time)
         return deliver! if environment_excluded?
@@ -185,6 +186,7 @@ module Resque
           actual_message.deliver
         end
       end
+      alias_method :deliver_now!, :deliver!
 
       def method_missing(method_name, *args)
         actual_message.send(method_name, *args)
