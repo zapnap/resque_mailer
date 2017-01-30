@@ -51,10 +51,10 @@ module Resque
       def perform(action, serialized_args)
         begin
           args = ::Resque::Mailer.argument_serializer.deserialize(serialized_args)
-          # symbolize keys so mailer block syntax works
+          # Add symbolized keys so mailer block syntax works
           if args.is_a?(Array)
             args = args.each_with_object([]) do |arg, o|
-              o << (arg.is_a?(Hash) ? arg.symbolize_keys : arg)
+              o << (arg.is_a?(Hash) ? arg.merge(arg.symbolize_keys) : arg)
             end
           end
           message = ::Resque::Mailer.prepare_message(self, action, *args)
