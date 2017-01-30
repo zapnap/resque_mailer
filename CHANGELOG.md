@@ -1,3 +1,6 @@
+### 2.4.2 / 2017-01-30
+* Fix for breaking change with symbolied keys vs strings (J Garcia)
+
 ### 2.4.1 / 2016-12-10
 * Symbolize argument keys to fix mailer block syntax issues (J Garcia)
 * Alias method for `deliver_now` (Kurt Funai)
