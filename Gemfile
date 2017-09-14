@@ -18,6 +18,7 @@ if RUBY_VERSION < "2.0"
 end
 
 gem 'actionmailer', rails
+gem 'activesupport', rails
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.

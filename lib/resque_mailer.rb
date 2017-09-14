@@ -1,6 +1,7 @@
 require 'resque_mailer/version'
 require 'resque_mailer/serializers/pass_thru_serializer'
 require 'resque_mailer/serializers/active_record_serializer'
+require 'active_support/core_ext/hash'
 
 module Resque
   module Mailer
@@ -51,10 +52,10 @@ module Resque
       def perform(action, serialized_args)
         begin
           args = ::Resque::Mailer.argument_serializer.deserialize(serialized_args)
-          # Add symbolized keys so mailer block syntax works
+          # Set hash as hash with indifferent access so mailer block syntax (needs symbols) works
           if args.is_a?(Array)
             args = args.each_with_object([]) do |arg, o|
-              o << (arg.is_a?(Hash) ? arg.merge(arg.symbolize_keys) : arg)
+              o << (arg.is_a?(Hash) ? arg.with_indifferent_access : arg)
             end
           end
           message = ::Resque::Mailer.prepare_message(self, action, *args)
