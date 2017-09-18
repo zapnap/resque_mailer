@@ -1,4 +1,4 @@
-### EDGE / 2017-09-14
+### 2.4.3 / 2017-09-18
 * Fix for duplicated keys (J Garcia)
 
 ### 2.4.2 / 2017-01-30
