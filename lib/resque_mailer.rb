@@ -1,7 +1,7 @@
 require 'resque_mailer/version'
 require 'resque_mailer/serializers/pass_thru_serializer'
 require 'resque_mailer/serializers/active_record_serializer'
-require 'active_support/core_ext/hash'
+require 'resque_mailer/symbolized_hash_with_indifferent_access'
 
 module Resque
   module Mailer
@@ -55,7 +55,7 @@ module Resque
           # Set hash as hash with indifferent access so mailer block syntax (needs symbols) works
           if args.is_a?(Array)
             args = args.each_with_object([]) do |arg, o|
-              o << (arg.is_a?(Hash) ? arg.with_indifferent_access : arg)
+              o << (arg.is_a?(Hash) ? ::Resque::Mailer::SymbolizedHashWithIndifferentAccess.new(arg) : arg)
             end
           end
           message = ::Resque::Mailer.prepare_message(self, action, *args)
