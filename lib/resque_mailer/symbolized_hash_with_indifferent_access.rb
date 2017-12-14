@@ -3,13 +3,13 @@ require 'delegate'
 
 module Resque
   module Mailer
-    class SymbolizedHashWithIndifferentAccess < ::SimpleDelegator
-      def to_hash
-        super.tap(&:symbolize_keys!)
+    class SymbolizedHashWithIndifferentAccess < DelegateClass(HashWithIndifferentAccess)
+      def initialize(obj= {})
+        super obj.with_indifferent_access
       end
 
-      def __setobj__(obj)
-        @delegate_sd_obj = obj.with_indifferent_access
+      def to_hash
+        symbolize_keys
       end
     end
   end
