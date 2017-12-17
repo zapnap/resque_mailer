@@ -1,3 +1,6 @@
+### EDGE / 2017-12-17
+* Restore support for named parameters (Anmol Chopra)
+
 ### 2.4.3 / 2017-09-18
 * Fix for duplicated keys (J Garcia)
 
