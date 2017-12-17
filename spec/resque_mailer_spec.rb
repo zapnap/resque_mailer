@@ -21,6 +21,16 @@ class Rails3Mailer < ActionMailer::Base
   end
 end
 
+class NamedParameterMailer < ActionMailer::Base
+  include Resque::Mailer
+  MAIL_PARAMS = { :to => "crafty@example.org" }
+
+  def test_mail(to:, subject: "Subject", from: "from@example.org")
+    Resque::Mailer.success!
+    mail(to: to, subject: subject, from: from, template_path: 'rails3_mailer')
+  end
+end
+
 class PriorityMailer < Rails3Mailer
   self.queue = 'priority_mailer'
 end
@@ -45,6 +55,7 @@ describe Resque::Mailer do
     allow(Resque::Mailer).to receive(:success!)
     allow(Resque::Mailer).to receive(:current_env).and_return(:test)
     Rails3Mailer.logger = logger
+    NamedParameterMailer.logger = logger
   end
 
   describe "resque" do
@@ -240,10 +251,10 @@ describe Resque::Mailer do
     end
   end
 
-  describe 'perform' do
+  shared_examples 'shared_perform' do |mailer_class|
     it 'performs a queued mailer job' do
       expect {
-        Rails3Mailer.perform(:test_mail, Resque::Mailer.argument_serializer.serialize(Rails3Mailer::MAIL_PARAMS))
+        mailer_class.perform(:test_mail, Resque::Mailer.argument_serializer.serialize(mailer_class::MAIL_PARAMS))
       }.to change(ActionMailer::Base.deliveries, :size).by(1)
     end
 
@@ -253,13 +264,14 @@ describe Resque::Mailer do
       let(:exception) { Exception.new("An error") }
 
       before(:each) do
-        allow(Rails3Mailer).to receive(:new) { mailer }
+        allow(mailer_class).to receive(:new) { mailer }
         allow(message).to receive(:deliver).and_raise(exception)
         allow(mailer).to receive(:process)
         allow(mailer).to receive(:message) { message }
+        Resque::Mailer.error_handler = nil
       end
 
-      subject { Rails3Mailer.perform(:test_mail, Rails3Mailer::MAIL_PARAMS) }
+      subject { mailer_class.perform(:test_mail, mailer_class::MAIL_PARAMS) }
 
       it "raises and logs the exception" do
         expect(logger).to receive(:error).at_least(:once)
@@ -279,7 +291,7 @@ describe Resque::Mailer do
 
         it "passes the mailer to the handler" do
           subject
-          expect(@mailer).to eq(Rails3Mailer)
+          expect(@mailer).to eq(mailer_class)
         end
 
         it "passes the message to the handler" do
@@ -294,7 +306,7 @@ describe Resque::Mailer do
 
         it "passes the args to the handler" do
           subject
-          expect(@args).to eq(Rails3Mailer::MAIL_PARAMS)
+          expect(@args).to eq(mailer_class::MAIL_PARAMS)
         end
 
         it "passes the exception to the handler" do
@@ -303,6 +315,11 @@ describe Resque::Mailer do
         end
       end
     end
+  end
+
+  describe 'perform' do
+    include_examples "shared_perform", Rails3Mailer
+    include_examples "shared_perform", NamedParameterMailer
   end
 
   describe 'original mail methods' do
