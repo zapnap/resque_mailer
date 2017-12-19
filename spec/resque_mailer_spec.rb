@@ -374,15 +374,14 @@ describe Resque::Mailer do
     end
 
     it "serializes the arguments with the custom serializer" do
-      allow(TestSerializer).to receive(:serialize)
-      expect(TestSerializer).to receive(:serialize)
+      expect(TestSerializer).to receive(:serialize).with(Rails3Mailer::MAIL_PARAMS)
       Rails3Mailer.test_mail(Rails3Mailer::MAIL_PARAMS).deliver
     end
 
     it "deserializes the arguments with the custom serializer" do
-      allow(TestSerializer).to receive(:deserialize)
-      expect(TestSerializer).to receive(:deserialize)
-      Rails3Mailer.perform(:test_mail, Resque::Mailer.argument_serializer.serialize(Rails3Mailer::MAIL_PARAMS))
+      serialized = Resque::Mailer.argument_serializer.serialize(Rails3Mailer::MAIL_PARAMS)
+      expect(TestSerializer).to receive(:deserialize).with(serialized)
+      Rails3Mailer.perform(:test_mail, serialized)
     end
   end
 end
